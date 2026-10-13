@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  userId             String   @id @default(uuid()) @map("user_id") @db.Uuid
+  username           String   @unique
+  fullname           String
+  role               String
+  email              String   @unique
+  phoneNumber        String   @map("phone_number")
+  passwordHashed     String   @map("hashed_password")
+  location           String
+  country            String
+  timezone           String
+  consentSrc         String   @map("consent_src")
+  emailConsent       Boolean  @map("email_consent")
+  phoneNumberConsent Boolean  @map("phone_number_consent")
+  consentAt          DateTime @map("consent_at") @db.Timestamptz(6)
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  articles      Article[]
+  streak        Streak?
+  checkIns      CheckIn[]
+  quests        Quest[]
+  refreshTokens RefreshToken[]
+  ph9Answers    PH9Answer[]
+
+  @@map("users")
+}
+
+model Streak {
+  userId          String    @id @map("user_id") @db.Uuid
+  currentStreak   Int       @default(0) @map("current_streak")
+  longestStreak   Int       @default(0) @map("longest_streak")
+  lastCheckInDate DateTime? @map("last_check_in_date") @db.Date
+  firstChecInDate DateTime  @default(now()) @map("first_check_in_date") @db.Date
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("streaks")
+}
+
+model CheckIn {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  checkInDate DateTime @map("check_in_date") @db.Date
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@unique([userId, checkInDate])
+  @@map("check_ins")
+}
+
+model Article {
+  articleId          String   @id @default(uuid()) @map("article_id") @db.Uuid
+  authorId           String   @map("author_id") @db.Uuid
+  articleTitle       String   @map("article_title")
+  articleDescription String   @map("article_description")
+  thumbnailUrl       String   @map("thumbnail_url")
+  likeCounts         Int      @default(0) @map("like_counts")
+  saveCounts         Int      @default(0) @map("save_counts")
+  sharedCounts       Int      @default(0) @map("shared_counts")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  articleBody ArticleBody?
+  author      User         @relation(fields: [authorId], references: [userId], onDelete: Cascade)
+
+  @@index([authorId])
+  @@map("articles")
+}
+
+model ArticleBody {
+  articleId String   @id @map("article_id") @db.Uuid
+  imageUrls String[] @map("image_urls")
+  content   String   @db.Text
+
+  article Article @relation(fields: [articleId], references: [articleId], onDelete: Cascade)
+
+  @@map("article_bodies")
+}
+
+model Quest {
+  questId          String   @id @default(uuid()) @map("quest_id") @db.Uuid
+  userId           String   @map("user_id") @db.Uuid
+  questTitle       String   @map("quest_title")
+  questDescription String   @map("quest_description")
+  progress         Int      @default(0)
+  questVersion     Float    @default(1) @map("quest_version")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("quests")
+}
+
+model RefreshToken {
+  tokenId   String    @id @default(uuid()) @map("token_id") @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  tokenHash String    @unique @map("token_hash")
+  issuedAt  DateTime  @default(now()) @map("issued_at") @db.Timestamptz(6)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model PH9Question {
+  questionId    String   @id @default(uuid()) @map("question_id") @db.Uuid
+  questionIndex Int      @unique @map("question_index")
+  questionBody  String   @map("question_body")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  answers PH9Answer[]
+
+  @@map("ph9_questions")
+}
+
+model PH9Answer {
+  answerId    String   @id @default(uuid()) @map("answer_id") @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  questionId  String   @map("question_id") @db.Uuid
+  answerValue Int      @map("answer_value")
+  answeredAt  DateTime @default(now()) @map("answered_at") @db.Timestamptz(6)
+
+  user     User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  question PH9Question @relation(fields: [questionId], references: [questionId], onDelete: Restrict)
+
+  @@index([userId, answeredAt])
+  @@index([questionId])
+  @@map("ph9_answers")
+}
+
+model GameModel {
+  GameID String @id @default(uuid()) @map("game_id") @db.Uuid
+
+  gameSession GameSession?
+
+  @@map("game_model")
+}
+
+model GameSession {
+  sessionID String @id @default(uuid()) @map("session_id") @db.Uuid
+  gameID String @map("game_id") @unique
+
+  game GameModel @relation(fields: [gameID], references: [GameID], onDelete: Cascade)
+}

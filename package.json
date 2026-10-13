@@ -1,0 +1,11 @@
+{
+  "name": "SKS",
+  "packageManager": "yarn@4.14.1",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "./frontend",
+      "./backend"
+    ]
+  }
+}
