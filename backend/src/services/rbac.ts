@@ -1,4 +1,4 @@
-import { AuthUser } from "../models/user";
+import { AuthUser } from "../models/model_list";
 
 export const ROLES = ["admin", "employee", "user", "guest"] as const;
 export type Role = (typeof ROLES)[number];
@@ -25,38 +25,38 @@ export const ROLE_PERMISSIONS = {
     "essay:create:own", 
     "essay:read:own", 
     "essay:delete:own",
-    "mission:read:any",
+    "mission:read:own",
   ],
 
   employee: [
-    "mission:read:any", 
     "mission:create:any", 
     "mission:update:any", 
     "mission:delete:any",
   ],
 
   admin: [
+    "profile:read:any",
     "user:read:any", 
     "user:update:any", 
     "user:delete:any",
-    "mission:read:any", 
     "mission:create:any", 
     "mission:update:any", 
     "mission:delete:any",
   ],
 } as const satisfies Record<Role, readonly Permission[]>;
 
-function has(role: AuthUser["Role"], p: Permission): boolean {
-  return (ROLE_PERMISSIONS[role] as readonly string[]).includes(p);
+function has(role: AuthUser["role"], p: Permission): boolean {
+  const permissions = ROLE_PERMISSIONS[role as Role] ?? [];
+  return (permissions as readonly Permission[]).includes(p);
 }
 
-export function canAccess(role: AuthUser["Role"], resource: Resource, action: Action): boolean {
+export function canAccess(role: AuthUser["role"], resource: Resource, action: Action): boolean {
   return has(role, `${resource}:${action}:any`) || has(role, `${resource}:${action}:own`);
 }
 
 export function can(user: AuthUser, resource: Resource, action: Action, ownerId?: string): boolean {
-  if (has(user.Role, `${resource}:${action}:any`)) return true;
+  if (has(user.role, `${resource}:${action}:any`)) return true;
   return ownerId !== undefined
-    && ownerId === user.UUID
-    && has(user.Role, `${resource}:${action}:own`);
+    && ownerId === user.userId
+    && has(user.role, `${resource}:${action}:own`);
 }

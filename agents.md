@@ -62,12 +62,8 @@ Always run shell commands from the project root directory.
   - `./backend/src/middlewares/validate.ts`
   - `./backend/src/error`
   - `./backend/src/models`
-  - `./backend/src/models/education.ts`
-  - `./backend/src/models/ph9.ts`
-  - `./backend/src/models/quest.ts`
-  - `./backend/src/models/streak.ts`
-  - `./backend/src/models/token.ts`
-  - `./backend/src/models/user.ts`
+  - `./backend/prisma/schema.prisma`
+  - `./backend/src/models/model_list.ts`
   - `./backend/src/services`
   - `./backend/src/services/migrator.ts`
   - `./backend/src/services/rbac.ts`

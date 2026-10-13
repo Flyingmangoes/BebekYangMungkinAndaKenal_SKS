@@ -20,9 +20,7 @@ Provide a brief overview (2–3 sentences) of what this product or feature is, w
 
 ## 2. Problem Statement & Background
 
-* **What problem are we solving?** Describe the primary user or business pain point.
-* **Why now?** Explain the strategic priority or market signal driving this feature today.
-* **Context / Background:** Add relevant context, current limitations, or user feedback.
+Many young adults, including students and early-career workers, experience stress related to assignments, workloads, relationships, and other everyday challenges. It can be difficult to make time for small, consistent wellbeing habits while managing these pressures. SKS aims to make taking those steps more approachable through personalized, manageable side quests and supportive activities tailored to users' needs. It is intended to complement, not replace, professional mental-health care.
 
 ---
 
@@ -61,11 +59,15 @@ Provide a brief overview (2–3 sentences) of what this product or feature is, w
 ## 5. Scope & Requirements
 
 ### 5.1 In-Scope
-* [Feature / Requirement 1]
-* [Feature / Requirement 2]
-
-### 5.2 Out-of-Scope (Non-Goals)
-* [Explicitly list elements that will NOT be included in this phase]
+* Auth Feature (Login, Register, Refresh, Logout)
+* Side Quest
+* Article
+* Reflection Zone 
+* Mini games
+* Message
+* AI
+* Pet
+* CheckIn & Streak
 
 ---
 
@@ -73,59 +75,24 @@ Provide a brief overview (2–3 sentences) of what this product or feature is, w
 
 | ID | Requirement Description | Priority (P0/P1/P2) | Acceptance Criteria |
 | :--- | :--- | :--- | :--- |
-| **FR-01** | User authentication via OAuth | **P0** | Users can sign in using Google or GitHub accounts. |
-| **FR-02** | Export reports to PDF | **P1** | User clicks "Export" and receives a formatted PDF within 5 seconds. |
-| **FR-03** | Dark mode toggle | **P2** | Theme updates across all views dynamically without page refresh. |
 
 > **Priority Levels:**  
-> * **P0:** Critical / Must-have for release.  
-> * **P1:** High priority / Important, but release can proceed without it if needed.  
-> * **P2:** Nice-to-have / Future enhancement.
+> * **P0:** Auth Feature.  
+> * **P1:** PH9 Quiz before registering user  
+> * **P2:** CheckIn & Streak
+> * **P3:** Quest
+> * **P4:** Article
+> * **P5:** Reflection Zone
+> * **P6:** Mini Games
+> * **P7:** AI
+> * **P8:** Pet
 
 ---
 
-## 7. Non-Functional Requirements (NFRs)
+## 7. Dependencies & Technical Constraints
 
-* **Performance:** [e.g., API response times under 200ms for 95% of requests]
-* **Security & Privacy:** [e.g., Data encrypted at rest (AES-256) and in transit (TLS 1.3)]
-* **Scalability:** [e.g., Support up to 50,000 concurrent active users]
-* **Accessibility:** [e.g., Must comply with WCAG 2.1 AA standards]
-
----
-
-## 8. Design & User Experience (UX)
-
-* **Design Links / Wireframes:** [Insert Figma / Design Link]
-* **User Flow Overview:** Briefly describe or diagram the user journey.
-
----
-
-## 9. Dependencies & Technical Constraints
-
-* **Dependencies:** [e.g., Third-party API availability, auth service migration]
-* **Technical Constraints:** [e.g., Must support legacy browsers, web responsive only]
-
----
-
-## 10. Risks & Open Questions
-
-### 10.1 Key Risks & Mitigations
-
-| Risk | Impact | Mitigation Plan |
-| :--- | :--- | :--- |
-| Third-party API rate limits | High | Implement server-side caching. |
-
-### 10.2 Open Questions
-* [ ] *Question 1: Do we need multi-language support for MVP? (Owner: @Product)*
-* [ ] *Question 2: What are the data retention requirements? (Owner: @Legal)*
-
----
-
-## 11. Timeline & Milestones
-
-| Milestone / Phase | Description | Target Date |
-| :--- | :--- | :--- |
-| **PRD Freeze** | Requirements finalized | YYYY-MM-DD |
-| **Design Freeze** | Mocks and flows approved | YYYY-MM-DD |
-| **Beta Launch** | Internal testing build | YYYY-MM-DD |
-| **GA Release** | Public rollout | YYYY-MM-DD |
+* **Dependencies:**
+  * 
+  * 
+  * 
+* **Technical Constraints:** Must be responsive and fast to build.

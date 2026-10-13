@@ -1,5 +1,5 @@
 
 
-export function createUserRoute() {
+export function userRouteFactory() {
 
 }

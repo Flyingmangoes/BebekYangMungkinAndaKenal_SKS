@@ -4,7 +4,10 @@ export type AuthUser = Pick<User, "userId" | "username" | "role">;
 export type PublicUser = Pick<User, "userId" | "username" | "fullname" | "role" >;
 export type SelfUser = Omit<User, "passwordHashed" | "consentSrc">;
 export type NewUser = Omit<User, "userId" | "createdAt" | "updatedAt">;
-export type ModifiedUser = Omit<User, "userId" | "createdAt" | "updatedAt">;
+export type ProfileUpdate = Partial<Pick<User, "username" | "fullname">>;
+export type AccountDetailUpdate = Partial<
+  Pick<User, "phoneNumber" | "location" | "country" | "timezone">
+>;
 
 export interface Session {
     sessionId: string;

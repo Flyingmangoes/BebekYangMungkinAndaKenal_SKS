@@ -7,7 +7,6 @@ export interface AuthRepositoryInterface {
   createUser(data: NewUser): Promise<User>;
   findUserById(userId: string): Promise<User | null>;
   findUserByLogin(usernameOrEmail: string): Promise<User | null>;
-  deleteUser(userId: string): Promise<void>;
   getPassword(userId: string, email: string): Promise<string | null>;
 }
 
@@ -35,10 +34,6 @@ export class AuthRepository implements AuthRepositoryInterface {
       ? { email: { equals: key, mode: "insensitive" } }
       : { username: { equals: key, mode: "insensitive" } };
     return this.db.user.findFirst({ where });
-  }
-
-  async deleteUser(userId: string): Promise<void> {
-    await this.db.user.deleteMany({ where: { userId } });
   }
 
   async getPassword(userId: string, email: string): Promise<string | null> {

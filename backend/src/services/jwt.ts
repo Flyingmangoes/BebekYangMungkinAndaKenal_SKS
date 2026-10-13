@@ -3,13 +3,13 @@ import { randomUUID } from "node:crypto";
 import { config } from "../config/config";
 import type {
   Session, PartialSession, EncodeResult, DecodeResult, ExpirationStatus,
-} from "../models/token";
+} from "../models/model_list";
 import { ROLES} from "./rbac";
 
 const ALGORITHM = "HS256" as const;
 const TTL_SECONDS = 60 * 60 * 24 * 7;
 
-function isRole(v: unknown): v is Session["Role"] {
+function isRole(v: unknown): v is Session["role"] {
     return typeof v === "string" && (ROLES as readonly string[]).includes(v);
 }
 
@@ -18,9 +18,9 @@ export function encodeSession(partial: PartialSession): EncodeResult {
     const exp = iat + TTL_SECONDS;
 
     const token = jwt.sign(
-        { username: partial.Username, role: partial.Role, iat, exp },
+        { username: partial.username, role: partial.role, iat, exp },
         config.Auth.jwtSecret,
-        { subject: partial.UserID, jwtid: randomUUID(), algorithm: ALGORITHM },
+        { subject: partial.userId, jwtid: randomUUID(), algorithm: ALGORITHM },
     );
 
   return { token, issued: new Date(iat * 1000), expires: new Date(exp * 1000) };
@@ -43,10 +43,10 @@ export function decodeSession(token: string): DecodeResult {
     return {
         type: "valid",
         session: {
-                SessionID: jti,
-                UserID: sub,
-                Username: username,
-                Role: role,
+                sessionId: jti,
+                userId: sub,
+                username: username,
+                role: role,
                 issuedAt: new Date(iat * 1000),
                 expiredAt: new Date(exp * 1000),
             },

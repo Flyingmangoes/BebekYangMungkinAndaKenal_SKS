@@ -1,7 +1,10 @@
 export type AuthErrorCode =
   | "INVALID_CREDENTIALS"
   | "INVALID_REFRESH"
-  | "CONFLICT";
+  | "ACCOUNT_CONFLICT"
+  | "USER_NOT_FOUND"
+  | "WRONG_PASSWORD"
+  | "INVALID_INPUT"
 
 export class AuthError extends Error {
   constructor(

@@ -6,7 +6,7 @@ import { AuthError } from "../../error/exception";
 import { encodeSession } from "../../services/jwt";
 import { AuthRepository } from "./auth.repo";
 import { TokenRepository } from "./token.repo";
-import type { RegisterInput, LoginInput } from "./types/auth.schema";
+import type { RegisterInput, LoginInput } from "./auth.schema";
 
 const sha256 = (s: string) => createHash("sha256").update(s).digest("hex");
 
