@@ -5,6 +5,7 @@ export type AuthErrorCode =
   | "USER_NOT_FOUND"
   | "WRONG_PASSWORD"
   | "INVALID_INPUT"
+  | "ALREADY_CHECKED_IN";
 
 export class AuthError extends Error {
   constructor(
@@ -15,3 +16,4 @@ export class AuthError extends Error {
     this.name = "AuthError";
   }
 }
+
