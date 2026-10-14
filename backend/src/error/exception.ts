@@ -10,10 +10,19 @@ export type AuthErrorCode =
 export class AuthError extends Error {
   constructor(
     public readonly code: AuthErrorCode,
-    message?: string,            
+    message?: string,
   ) {
     super(message ?? code);
     this.name = "AuthError";
   }
 }
 
+export type ArticleErrorCode = "NOT_FOUND" | "FORBIDDEN";
+
+export class ArticleError extends Error {
+  constructor(public readonly code: ArticleErrorCode) {
+    super(code);
+    this.name = "ArticleError";
+    Object.setPrototypeOf(this, ArticleError.prototype);
+  }
+}
