@@ -5,13 +5,24 @@ export type AuthErrorCode =
   | "USER_NOT_FOUND"
   | "WRONG_PASSWORD"
   | "INVALID_INPUT"
+  | "ALREADY_CHECKED_IN";
 
 export class AuthError extends Error {
   constructor(
     public readonly code: AuthErrorCode,
-    message?: string,            
+    message?: string,
   ) {
     super(message ?? code);
     this.name = "AuthError";
+  }
+}
+
+export type ArticleErrorCode = "NOT_FOUND" | "FORBIDDEN";
+
+export class ArticleError extends Error {
+  constructor(public readonly code: ArticleErrorCode) {
+    super(code);
+    this.name = "ArticleError";
+    Object.setPrototypeOf(this, ArticleError.prototype);
   }
 }

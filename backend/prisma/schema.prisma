@@ -159,3 +159,4 @@ model GameSession {
 
   game GameModel @relation(fields: [gameID], references: [GameID], onDelete: Cascade)
 }
+
