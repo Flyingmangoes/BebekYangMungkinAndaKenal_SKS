@@ -1,14 +1,15 @@
-import type { PH9Question, Quest, Streak, User } from "../../generated/prisma/client";
+import type { Ph9Question, Ph9Answer, Ph9Submission, Quest, Streak } from "../../generated/prisma/client";
 import type { AuthUser } from "../../models/model_list";
 
 declare global {
     namespace Express {
         interface Request {
             authUser?: AuthUser;
-            user?: User;
             userStreak?: Streak;
             userSideQuest?: Quest;
-            phNineQuestions?: PH9Question[];
+            ph9Questions?: Ph9Question[];
+            ph9Answer?:Ph9Answer[];
+            ph9Submission?:Ph9Submission;
         }
     }
 }

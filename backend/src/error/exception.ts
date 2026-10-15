@@ -17,12 +17,25 @@ export class AuthError extends Error {
   }
 }
 
-export type ArticleErrorCode = "NOT_FOUND" | "FORBIDDEN";
+export type ArticleErrorCode = 
+  | "NOT_FOUND" 
+  | "FORBIDDEN";
 
 export class ArticleError extends Error {
   constructor(public readonly code: ArticleErrorCode) {
     super(code);
     this.name = "ArticleError";
-    Object.setPrototypeOf(this, ArticleError.prototype);
+  }
+}
+
+export type Ph9ErrorCode = 
+  |"INVALID_INPUT" 
+  | "UNAUTHORIZED" 
+  | "SUBMISSION_NOT_FOUND";
+
+export class Ph9Error extends Error {
+  constructor(public readonly code: Ph9ErrorCode) {
+    super(code);
+    this.name = "Ph9Error";
   }
 }

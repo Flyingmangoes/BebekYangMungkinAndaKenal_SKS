@@ -30,17 +30,17 @@ model User {
   checkIns      CheckIn[]
   quests        Quest[]
   refreshTokens RefreshToken[]
-  ph9Answers    PH9Answer[]
+  ph9Answers    Ph9Submission[]
 
   @@map("users")
 }
 
 model Streak {
-  userId          String    @id @map("user_id") @db.Uuid
-  currentStreak   Int       @default(0) @map("current_streak")
-  longestStreak   Int       @default(0) @map("longest_streak")
-  lastCheckInDate DateTime? @map("last_check_in_date") @db.Date
-  firstChecInDate DateTime  @default(now()) @map("first_check_in_date") @db.Date
+  userId           String    @id @map("user_id") @db.Uuid
+  currentStreak    Int       @default(0) @map("current_streak")
+  longestStreak    Int       @default(0) @map("longest_streak")
+  lastCheckInDate  DateTime? @map("last_check_in_date") @db.Date
+  firstCheckInDate DateTime  @default(now()) @map("first_check_in_date") @db.Date
 
   user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
@@ -118,45 +118,57 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
-model PH9Question {
+model Ph9Question {
   questionId    String   @id @default(uuid()) @map("question_id") @db.Uuid
   questionIndex Int      @unique @map("question_index")
   questionBody  String   @map("question_body")
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  answers PH9Answer[]
+  answers Ph9Answer[]
 
   @@map("ph9_questions")
 }
 
-model PH9Answer {
-  answerId    String   @id @default(uuid()) @map("answer_id") @db.Uuid
-  userId      String   @map("user_id") @db.Uuid
-  questionId  String   @map("question_id") @db.Uuid
-  answerValue Int      @map("answer_value")
-  answeredAt  DateTime @default(now()) @map("answered_at") @db.Timestamptz(6)
+model Ph9Submission {
+  submissionId String   @id @default(uuid()) @map("submission_id") @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  totalScore   Int      @map("total_score")
+  submittedAt  DateTime @default(now()) @map("submitted_at") @db.Timestamptz(6)
 
-  user     User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  question PH9Question @relation(fields: [questionId], references: [questionId], onDelete: Restrict)
+  user    User        @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  answers Ph9Answer[]
 
-  @@index([userId, answeredAt])
+  @@index([userId, submittedAt])
+  @@map("ph9_submissions")
+}
+
+model Ph9Answer {
+  answerId     String @id @default(uuid()) @map("answer_id") @db.Uuid
+  submissionId String @map("submission_id") @db.Uuid
+  questionId   String @map("question_id") @db.Uuid
+  answerValue  Int    @map("answer_value")
+
+  submission Ph9Submission @relation(fields: [submissionId], references: [submissionId], onDelete: Cascade)
+  question   Ph9Question   @relation(fields: [questionId], references: [questionId], onDelete: Restrict)
+
+  @@unique([submissionId, questionId])
   @@index([questionId])
   @@map("ph9_answers")
 }
 
 model GameModel {
-  GameID String @id @default(uuid()) @map("game_id") @db.Uuid
-
+  gameId      String       @id @default(uuid()) @map("game_id") @db.Uuid
   gameSession GameSession?
 
   @@map("game_model")
 }
 
 model GameSession {
-  sessionID String @id @default(uuid()) @map("session_id") @db.Uuid
-  gameID String @map("game_id") @unique
+  sessionId String @id @default(uuid()) @map("session_id") @db.Uuid
+  gameId    String @unique @map("game_id") @db.Uuid // was missing @db.Uuid, which breaks the FK
 
-  game GameModel @relation(fields: [gameID], references: [GameID], onDelete: Cascade)
+  game GameModel @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
+
+  @@map("game_session")
 }
-
