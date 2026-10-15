@@ -1,0 +1,24 @@
+{
+    "en": [
+            { "questionIndex": 1, "questionBody": "Little interest or pleasure in doing things" },
+            { "questionIndex": 2, "questionBody": "Feeling down, depressed, or hopeless" },
+            { "questionIndex": 3, "questionBody": "Trouble falling or staying asleep, or sleeping too much" },
+            { "questionIndex": 4, "questionBody": "Feeling tired or having little energy " },
+            { "questionIndex": 5, "questionBody": "Poor appetite or overeating" },
+            { "questionIndex": 6, "questionBody": "Feeling bad about yourself — or that you are a failure or have let yourself or your family down" },
+            { "questionIndex": 7, "questionBody": "Trouble concentrating on things, such as reading the newspaper or watching television" },
+            { "questionIndex": 8, "questionBody": "Moving or speaking so slowly that other people could have noticed?  Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual" },
+            { "questionIndex": 9, "questionBody": "Thoughts that you would be better off dead or of hurting yourself in some way" }
+    ],
+    "id": [        
+            { "questionIndex": 1, "questionBody": "Kurang tertarik atau bergairah dalam melakukan apapun" },
+            { "questionIndex": 2, "questionBody": "Merasa murung, muram, atau putus asa" },
+            { "questionIndex": 3, "questionBody": "Sulit tidur atau mudah terbangun, atau terlalu banyak tidur" },
+            { "questionIndex": 4, "questionBody": "Merasa lelah atau kurang bertenaga" },
+            { "questionIndex": 5, "questionBody": "Kurang nafsu makan atau terlalu banyak makan " },
+            { "questionIndex": 6, "questionBody": "Kurang percaya diri — atau merasa bahwa Anda adalah orang yang gagal atau telah mengecewakan diri sendiri atau keluarga" },
+            { "questionIndex": 7, "questionBody": "Sulit berkonsentrasi pada sesuatu, misalnya membaca koran atau menonton televisi" },
+            { "questionIndex": 8, "questionBody": "Bergerak atau berbicara sangat lambat sehingga orang lain memperhatikannya.  Atau sebaliknya — merasa resah atau gelisah sehingga Anda lebih sering bergerak dari biasanya." },
+            { "questionIndex": 9, "questionBody": "Merasa lebih baik mati atau ingin melukai diri sendiri dengan cara apapun. " }
+    ]
+}

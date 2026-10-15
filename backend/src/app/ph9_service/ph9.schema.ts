@@ -1,7 +1,15 @@
 import { z } from "zod";
 import { PH9_MAX_ANSWER, PH9_MIN_ANSWER, PH9_QUESTION_COUNT } from "./ph9.scoring";
 
+export const PH9_LANGUAGES = ["en", "id"] as const;
+export type Ph9Language = (typeof PH9_LANGUAGES)[number];
+
+export const questionsQuerySchema = z.object({
+  lang: z.enum(PH9_LANGUAGES).default("id"),
+});
+
 export const submitPh9Schema = z.strictObject({
+  language: z.string(),
   answers: z
     .array(
       z.strictObject({

@@ -2,18 +2,13 @@ import { Router } from "express";
 import { validate } from "../../middlewares/validate";
 import { requireAuth } from "../../middlewares/auth";
 import { MissionController } from "./mission_controllers";
-import type { MissionService } from "./mission_services";
-import {
-  createMissionSchema,
-  missionParamSchema,
-  updateMissionSchema,
-} from "./mission_schema";
+import type { MissionService } from "./mission.services";
+import { createMissionSchema,missionParamSchema,updateMissionSchema } from "./mission.schema";
 
 export function missionRouteFactory(service: MissionService): Router {
   const router = Router();
   const ctrl = MissionController(service);
-
-  // Semua endpoint misi butuh user yang login
+  
   router.use(requireAuth);
 
   router.post("/",           validate(createMissionSchema), ctrl.create);

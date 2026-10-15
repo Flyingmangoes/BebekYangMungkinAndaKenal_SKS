@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireAuth, requirePermission, requireRole } from "../../../middlewares/auth";
-import { CheckinController } from "./checkin_streak.controllers";
+import { CheckinController } from "./checkin.streak.controllers";
 import type { CheckinService } from "./checkin.services";
 
 export function checkinRouteFactory(service: CheckinService): Router {

@@ -121,13 +121,24 @@ model RefreshToken {
 model Ph9Question {
   questionId    String   @id @default(uuid()) @map("question_id") @db.Uuid
   questionIndex Int      @unique @map("question_index")
-  questionBody  String   @map("question_body")
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  answers Ph9Answer[]
+  translations Ph9QuestionTranslation[]
+  answers      Ph9Answer[]
 
   @@map("ph9_questions")
+}
+
+model Ph9QuestionTranslation {
+  questionId   String @map("question_id") @db.Uuid
+  language     String @db.VarChar(10)
+  questionBody String @map("question_body")
+
+  question Ph9Question @relation(fields: [questionId], references: [questionId], onDelete: Cascade)
+
+  @@id([questionId, language])
+  @@map("ph9_question_translations")
 }
 
 model Ph9Submission {

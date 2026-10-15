@@ -3,12 +3,18 @@ import type { CheckinService } from "./checkin.services";
 import { AuthError } from "../../../error/exception";
 import { historySchema } from "./checkin_streak.schema";
 
-const userIdOf = (req: Request): string => req.authUser!.userId;
+const getUserId = (req: Request): string | undefined => req.authUser?.userId;
 
 export const CheckinController = (checkinService: CheckinService) => ({
   async checkIn(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await checkinService.checkIn(userIdOf(req));
+      const userId = getUserId(req)
+      if(!userId) {
+          res.status(401).json("Not authenticated")
+          return
+      }
+
+      const result = await checkinService.checkIn(userId);
       res.status(201).json(result);
     } catch (err) {
       if (err instanceof AuthError) {
@@ -27,7 +33,13 @@ export const CheckinController = (checkinService: CheckinService) => ({
 
   async streak(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const streak = await checkinService.getStreak(userIdOf(req));
+      const userId = getUserId(req)
+      if(!userId) {
+          res.status(401).json("Not authenticated")
+          return
+      }
+
+      const streak = await checkinService.getStreak(userId);
       res.json(streak);
     } catch (err) {
       if (err instanceof AuthError && err.code === "USER_NOT_FOUND") {
@@ -45,7 +57,14 @@ export const CheckinController = (checkinService: CheckinService) => ({
         res.status(400).json({ message: "Invalid query" });
         return;
       }
-      const items = await checkinService.getHistory(userIdOf(req), parsed.data.limit);
+
+      const userId = getUserId(req)
+      if(!userId) {
+          res.status(401).json("Not authenticated")
+          return
+      }
+
+      const items = await checkinService.getHistory(userId, parsed.data.limit);
       res.json(items);
     } catch (err) {
       next(err);

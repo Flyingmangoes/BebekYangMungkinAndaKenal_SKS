@@ -29,7 +29,7 @@ export class ArticleError extends Error {
 }
 
 export type Ph9ErrorCode = 
-  |"INVALID_INPUT" 
+  | "INVALID_INPUT" 
   | "UNAUTHORIZED" 
   | "SUBMISSION_NOT_FOUND";
 
@@ -46,6 +46,5 @@ export class MissionError extends Error {
   constructor(public readonly code: MissionErrorCode) {
     super(code);
     this.name = "MissionError";
-    Object.setPrototypeOf(this, MissionError.prototype);
   }
 }

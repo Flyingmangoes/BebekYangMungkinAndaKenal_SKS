@@ -1,7 +1,7 @@
 import { Prisma } from "../../generated/prisma/client";
 import type { PrismaClient, Quest } from "../../generated/prisma/client";
 import { MissionError } from "../../error/exception";
-import type { CreateMissionInput, UpdateMissionInput } from "./mission_schema";
+import type { CreateMissionInput, UpdateMissionInput } from "./mission.schema";
 
 const isNotFound = (error: unknown): boolean =>
   error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -21,7 +21,6 @@ export class MissionRepository {
     });
   }
 
-  // Filter userId ikut di where, jadi quest milik user lain dianggap tidak ada
   async findOwnedById(questId: string, userId: string): Promise<Quest | null> {
     return this.db.quest.findFirst({ where: { questId, userId } });
   }

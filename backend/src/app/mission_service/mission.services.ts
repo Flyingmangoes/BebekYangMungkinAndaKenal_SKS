@@ -1,7 +1,7 @@
 import type { Quest } from "../../generated/prisma/client";
 import { MissionError } from "../../error/exception";
-import type { MissionRepository } from "./mission_repo";
-import type { CreateMissionInput, UpdateMissionInput } from "./mission_schema";
+import type { MissionRepository } from "./mission.repo";
+import type { CreateMissionInput, UpdateMissionInput } from "./mission.schema";
 
 export class MissionService {
   constructor(private readonly missionRepo: MissionRepository) {}

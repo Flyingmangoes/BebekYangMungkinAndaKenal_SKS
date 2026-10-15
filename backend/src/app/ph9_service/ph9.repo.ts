@@ -1,11 +1,14 @@
-import type {
-  Ph9Question,
-  Ph9Submission,
-  Prisma,
-  PrismaClient,
-} from "../../generated/prisma/client";
+import type { Ph9Submission, Prisma, PrismaClient } from "../../generated/prisma/client";
+import type { Ph9Language } from "./ph9.schema";
 
-export type Ph9QuestionView = Pick<Ph9Question, "questionId" | "questionIndex" | "questionBody">;
+export interface Ph9QuestionRef {
+  questionId: string;
+  questionIndex: number;
+}
+
+export interface Ph9QuestionView extends Ph9QuestionRef {
+  questionBody: string;
+}
 
 export interface NewPh9Answer {
   questionId: string;
@@ -24,7 +27,8 @@ export type Ph9SubmissionWithAnswers = Prisma.Ph9SubmissionGetPayload<{
 }>;
 
 export interface Ph9RepositoryInterface {
-  listQuestions(): Promise<Ph9QuestionView[]>;
+  listQuestionRefs(): Promise<Ph9QuestionRef[]>;
+  listQuestions(language: Ph9Language): Promise<Ph9QuestionView[]>;
   createSubmission(userId: string, totalScore: number, answers: NewPh9Answer[]): Promise<Ph9Submission>;
   listSubmissions(userId: string, take: number, cursor?: string): Promise<Ph9Submission[]>;
   findSubmission(userId: string, submissionId: string): Promise<Ph9SubmissionWithAnswers | null>;
@@ -33,11 +37,28 @@ export interface Ph9RepositoryInterface {
 export class Ph9Repository implements Ph9RepositoryInterface {
   constructor(private readonly db: PrismaClient) {}
 
-  async listQuestions(): Promise<Ph9QuestionView[]> {
+  // Language-independent: used for validating and scoring a submission.
+  async listQuestionRefs(): Promise<Ph9QuestionRef[]> {
     return this.db.ph9Question.findMany({
-      select: { questionId: true, questionIndex: true, questionBody: true },
+      select: { questionId: true, questionIndex: true },
       orderBy: { questionIndex: "asc" },
     });
+  }
+
+  async listQuestions(language: Ph9Language): Promise<Ph9QuestionView[]> {
+    const rows = await this.db.ph9Question.findMany({
+      select: {
+        questionId: true,
+        questionIndex: true,
+        translations: { where: { language }, select: { questionBody: true } },
+      },
+      orderBy: { questionIndex: "asc" },
+    });
+    return rows.flatMap((r) =>
+      r.translations[0]
+        ? [{ questionId: r.questionId, questionIndex: r.questionIndex, questionBody: r.translations[0].questionBody }]
+        : [],
+    );
   }
 
   // Nested write: the submission and its answers are saved atomically.

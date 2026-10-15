@@ -2,7 +2,8 @@ import type { NextFunction, Request, Response } from "express";
 import { Ph9Error } from "../../error/exception";
 import type { Ph9ErrorCode } from "../../error/exception";
 import type { Ph9Service } from "./ph9.services.ts";
-import { historyQuerySchema, submissionParamsSchema } from "./ph9.schema";
+import { historyQuerySchema, submissionParamsSchema, questionsQuerySchema } from "./ph9.schema";
+
 
 const ERROR_RESPONSES: Record<Ph9ErrorCode, { status: number; message: string }> = {
     INVALID_INPUT: { status: 400, message: "Invalid request" },
@@ -27,9 +28,12 @@ const fail = (err: unknown, res: Response, next: NextFunction): void => {
 };
 
 export const Ph9Controller = (ph9Service: Ph9Service) => ({
-    async getQuestions(_req: Request, res: Response, next: NextFunction): Promise<void> {
+        async getQuestions(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            res.json({ questions: await ph9Service.getQuestions() });
+            const query = questionsQuerySchema.safeParse(req.query);
+            if (!query.success) throw new Ph9Error("INVALID_INPUT");
+
+            res.json({ questions: await ph9Service.getQuestions(query.data.lang) });
         } catch (err) {
             fail(err, res, next);
         }
