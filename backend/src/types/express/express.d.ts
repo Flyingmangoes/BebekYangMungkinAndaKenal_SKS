@@ -1,8 +1,5 @@
-import type { AuthUser } from "../../models/user"
-import type { PH9Question } from "../../models/ph9"
-import { User } from "@supabase/supabase-js";
-import { Streak } from "../../models/streak";
-import { Quest } from "../../models/quest";
+import type { PH9Question, Quest, Streak, User } from "../../generated/prisma/client";
+import type { AuthUser } from "../../models/model_list";
 
 declare global {
     namespace Express {

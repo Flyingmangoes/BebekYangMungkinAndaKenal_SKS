@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import type { AuthUser } from "../models/user";
+import type { AuthUser } from "../models/model_list";
 import type { Resource, Action } from "../services/rbac";
 import { canAccess } from "../services/rbac";
 import { decodeSession } from "../services/jwt";
@@ -23,18 +23,18 @@ export function requireAuth(req: Request, res: Response, next: NextFunction): vo
     return;
   }
 
-  const { UUID, Username, Role } = result.session;
-  req.authUser = { UUID, Username, Role };
+  const { userId, username, role } = result.session;
+  req.authUser = { userId, username, role };
   next();
 }
 
-export function requireRole(...roles: AuthUser["Role"][]) {
+export function requireRole(...roles: AuthUser["role"][]) {
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.authUser) {
       res.status(401).json({ message: "Not authenticated" });
       return;
     }
-    if (!roles.includes(req.authUser.Role)) {
+    if (!roles.includes(req.authUser.role)) {
       res.status(403).json({ message: "Insufficient permissions" });
       return;
     }
@@ -48,7 +48,7 @@ export function requirePermission(resource: Resource, action: Action) {
       res.status(401).json({ message: "Not authenticated" });
       return;
     }
-    if (!canAccess(req.authUser.Role, resource, action)) {
+    if (!canAccess(req.authUser.role, resource, action)) {
       res.status(403).json({ message: "Insufficient permissions" });
       return;
     }

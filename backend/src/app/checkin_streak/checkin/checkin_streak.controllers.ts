@@ -3,8 +3,7 @@ import type { CheckinService } from "./checkin.services";
 import { AuthError } from "../../../error/exception";
 import { historySchema } from "./checkin_streak.schema";
 
-// asumsi: requireAuth mengisi req.user = { userId, username, role }
-const userIdOf = (req: Request): string => (req as Request & { user: { userId: string } }).user.userId;
+const userIdOf = (req: Request): string => req.authUser!.userId;
 
 export const CheckinController = (checkinService: CheckinService) => ({
   async checkIn(req: Request, res: Response, next: NextFunction): Promise<void> {
