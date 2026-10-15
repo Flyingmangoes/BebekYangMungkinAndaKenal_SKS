@@ -39,3 +39,13 @@ export class Ph9Error extends Error {
     this.name = "Ph9Error";
   }
 }
+
+export type MissionErrorCode = "NOT_FOUND";
+
+export class MissionError extends Error {
+  constructor(public readonly code: MissionErrorCode) {
+    super(code);
+    this.name = "MissionError";
+    Object.setPrototypeOf(this, MissionError.prototype);
+  }
+}

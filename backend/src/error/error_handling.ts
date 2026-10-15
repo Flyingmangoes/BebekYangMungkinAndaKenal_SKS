@@ -3,6 +3,8 @@ import {
   AuthErrorCode,
   ArticleError,
   ArticleErrorCode,
+  MissionError,
+  MissionErrorCode,
 } from "./exception";
 import { NextFunction, Response } from "express";
 
@@ -50,6 +52,26 @@ export function handleArticleError(
 ): void {
   if (err instanceof ArticleError) {
     const { status, message } = ARTICLE_STATUS[err.code];
+    res.status(status).json({ message });
+    return;
+  }
+  next(err);
+}
+
+const MISSION_STATUS: Record<
+  MissionErrorCode,
+  { status: number; message: string }
+> = {
+  NOT_FOUND: { status: 404, message: "Mission not found" },
+};
+
+export function handleMissionError(
+  err: unknown,
+  res: Response,
+  next: NextFunction,
+): void {
+  if (err instanceof MissionError) {
+    const { status, message } = MISSION_STATUS[err.code];
     res.status(status).json({ message });
     return;
   }
