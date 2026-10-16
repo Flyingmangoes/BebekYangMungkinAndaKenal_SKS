@@ -31,7 +31,7 @@ const article = {
   description:
     'Pernah ngerasa udah tidur 8 jam penuh, tapi pas bangun rasanya tetep lemes dan berat ngadepin hari? Mungkin yang lelah bukan cuma ototmu, tapi baterai mentalku.',
   heroImage:
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuB7qVJizpq7IFYV8X8egtElPoxnARXYgcvrd8PsF0zRFuWonlZNKg6B9XOq6FyFNvd3hmXK_21u-MMrJN257vovIUjTbSfKZcGz4iEy3t2Whx74oYa3XV8dM3IK7QMxP1UiNpNdYvDShHZ5bc2PcUbekmY7fcKHCTmDBKTPJSwmwliUzpMt5RCV0HTWmZllw8z1D1BxJc-QROA4iXrGpb_71sri1oycQB_AmzwgYKeQtOTIiPYvaLJBAA',
+    'https://i.pinimg.com/1200x/90/80/15/908015bfc300392daf35c6ef9f3d5f66.jpg',
   microHabitImage:
     'https://lh3.googleusercontent.com/aida-public/AB6AXuDSqxmbq6Fau3YF2Sn1mUKalTIqjDvINFo6Ufqku2ZCXgsVbO9eWgXqvUr1V3BLphwAngQGj8nFIBnoszmc5DmeNL3uv6IRcweet3cdb2J0AduRJNxLc2oLQG1ZLRf5lWISUtaMbyk5USi3dd4_mjzpG2jDWCEFqd5_foo6fZs49Gh3FeTcXPjT6DsCKdXN9i-2ymby5s1OAUdFasFXKHPaKhSfHm2AHswzeyu8fd4jVUYgkiqAJewJ2g',
 }

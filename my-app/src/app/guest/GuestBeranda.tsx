@@ -172,7 +172,7 @@ function App() {
         <button
           type="button"
           onClick={handleLogin}
-          className="flex shrink-0 items-center gap-1 rounded-full bg-pelan-600 px-space-md py-space-xs font-label-md text-label-md text-white shadow-sm transition-colors hover:bg-pelan-700 active:scale-95"
+          className="flex shrink-0 items-center gap-1 rounded-md bg-pelan-600 px-space-md py-space-xs font-label-md text-label-md text-white shadow-sm transition-colors hover:bg-pelan-700 active:scale-95"
         >
           <span>Masuk</span>
           <MaterialIcon className="text-[16px]">arrow_forward</MaterialIcon>
@@ -231,67 +231,64 @@ function App() {
 
       {/* Featured Topic */}
       <article
-        className="cursor-pointer space-y-4 rounded-2xl bg-white/85 p-5 shadow-[0_1px_2px_rgba(43,42,38,0.04)] ring-1 ring-cream-300/70 transition-all hover:shadow-md active:scale-[0.99] lg:p-8"
-        onClick={() => void navigate("/topic/guest")}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") {
-            void navigate("/topic/guest");
-          }
-        }}
-        role="link"
-        tabIndex={0}
-      >
-        <div className="flex items-center justify-between">
-          <span className="rounded-md bg-secondary-fixed px-2.5 py-1 font-sans text-label-sm text-on-secondary-fixed">
-            Paling Sering Dialami
-          </span>
+  className="cursor-pointer rounded-2xl bg-white/85 p-5 shadow-[0_1px_2px_rgba(43,42,38,0.04)] ring-1 ring-cream-300/70 transition-all hover:shadow-md active:scale-[0.99] lg:p-6"
+  onClick={() => void navigate("/topic/guest")}
+  onKeyDown={(event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      void navigate("/topic/guest");
+    }
+  }}
+  role="link"
+  tabIndex={0}
+>
+  <div className="flex flex-col gap-4 md:flex-row md:items-center">
+    {/* Gambar tetap di ukuran semula */}
+    <div className="relative h-36 w-60 shrink-0 overflow-hidden rounded-lg bg-surface-container">
+      <img
+        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV85sTu4rV8_oGc_KEeMrEVlBc4Spb3ri4AFPoKbGDnu-doNNBNiN9vjtQ_HIcfHtXQiWoHRN2QBdgfKhxGZ5KRWUvjOvRkbmcKRHgYPNBuQg5BKEOAcakizPA4ZMrAxq52ozrNUhYTMrTg0s0byM48u2rzp6YIpPgjE6JLWAqMQl6FHl-_7P0mqFzqTUN3vDsBM20h16IiUTrn7rqLwgrMbfbwxdRrMmPwrg9-9aQLEiUCbXNbIUj0g"
+        alt="Ilustrasi seseorang sedang beristirahat"
+        className="h-full w-full object-cover"
+      />
+      <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded-full bg-surface/90 px-2 py-0.5 font-sans text-label-sm text-on-surface backdrop-blur">
+        <MaterialIcon className="text-[14px] text-tertiary">spa</MaterialIcon>
+        <span>Bacaan Pilihan</span>
+      </div>
+    </div>
 
-          <div className="flex items-center gap-1 font-serif text-label-sm text-on-surface-variant">
-            <MaterialIcon className="text-[16px]">schedule</MaterialIcon>
-            <span>4 menit baca</span>
-          </div>
+    {/* Konten Teks di Samping Gambar */}
+    <div className="flex flex-1 flex-col justify-between space-y-3">
+      <div className="flex items-center justify-between">
+        <span className="rounded-md bg-secondary-fixed px-2.5 py-1 font-sans text-label-sm text-on-secondary-fixed">
+          Paling Sering Dialami
+        </span>
+        <div className="flex items-center gap-1 font-serif text-label-sm text-on-surface-variant">
+          <MaterialIcon className="text-[16px]">schedule</MaterialIcon>
+          <span>4 menit baca</span>
         </div>
+      </div>
 
-        <div className="relative flex h-36 w-full items-center justify-center overflow-hidden rounded-lg bg-surface-container">
-          <img
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV85sTu4rV8_oGc_KEeMrEVlBc4Spb3ri4AFPoKbGDnu-doNNBNiN9vjtQ_HIcfHtXQiWoHRN2QBdgfKhxGZ5KRWUvjOvRkbmcKRHgYPNBuQg5BKEOAcakizPA4ZMrAxq52ozrNUhYTMrTg0s0byM48u2rzp6YIpPgjE6JLWAqMQl6FHl-_7P0mqFzqTUN3vDsBM20h16IiUTrn7rqLwgrMbfbwxdRrMmPwrg9-9aQLEiUCbXNbIUj0g"
-            alt="Ilustrasi seseorang sedang beristirahat"
-            className="h-full w-full object-cover"
-          />
+      <div>
+        <h3 className="font-serif text-xl font-medium leading-snug text-ink-900">
+          Burnout: Ketika capek bukan cuma soal kurang tidur.
+        </h3>
+        <p className="mt-1 line-clamp-2 font-body-md text-sm text-on-surface-variant">
+          Tubuh sudah rebahan tapi pikiran masih lari maraton. Kenali sinyal saat bateraimu beneran butuh diisi ulang dari akar.
+        </p>
+      </div>
 
-          <div className="absolute bottom-2 right-2 flex items-center gap-1 rounded-full bg-surface/90 px-2 py-0.5 font-sans text-label-sm text-on-surface backdrop-blur">
-            <MaterialIcon className="text-[14px] text-tertiary">
-              spa
-            </MaterialIcon>
-            <span>Bacaan Pilihan</span>
-          </div>
+      <div className="flex items-center justify-between pt-1">
+        <div className="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
+          <MaterialIcon className="text-[18px] text-primary">psychology</MaterialIcon>
+          <span>Kelelahan Mental</span>
         </div>
-
-        <div className="space-y-space-xs">
-          <h3 className="font-serif text-2xl font-medium leading-snug text-ink-900">
-            Burnout: Ketika capek bukan cuma soal kurang tidur.
-          </h3>
-
-          <p className="font-body-md text-body-md leading-relaxed text-on-surface-variant">
-            Tubuh sudah rebahan tapi pikiran masih lari maraton. Kenali sinyal
-            saat bateraimu beneran butuh diisi ulang dari akar.
-          </p>
-        </div>
-
-        <div className="flex items-center justify-between pt-space-xs">
-          <div className="flex items-center gap-space-xs font-label-sm text-label-sm text-on-surface-variant">
-            <MaterialIcon className="text-[18px] text-primary">
-              psychology
-            </MaterialIcon>
-            <span>Kelelahan Mental</span>
-          </div>
-
-          <span className="inline-flex items-center gap-1 font-label-md text-label-md text-primary transition-colors hover:text-primary-container">
-            <span>Baca ulasan santai</span>
-            <MaterialIcon className="text-[18px]">arrow_forward</MaterialIcon>
-          </span>
-        </div>
-      </article>
+        <span className="inline-flex items-center gap-1 font-label-md text-label-md text-primary transition-colors hover:text-primary-container">
+          <span>Baca ulasan santai</span>
+          <MaterialIcon className="text-[18px]">arrow_forward</MaterialIcon>
+        </span>
+      </div>
+    </div>
+  </div>
+</article>
 
       {/* Topic Header */}
       <div className="flex items-center justify-between pt-space-xs">

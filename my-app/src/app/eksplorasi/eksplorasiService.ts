@@ -21,6 +21,7 @@ export interface FeaturedArticle {
   summaryTitle: string
   summaryPoints: readonly string[]
   badge: string
+  imgSrc: string
 }
 
 export interface Article {
@@ -33,6 +34,7 @@ export interface Article {
   authorInitials: string
   authorName: string
   artwork: ArtworkVariant
+  imgSrc?: string
 }
 
 export const EKSPLORASI_HEADER = {
@@ -58,6 +60,7 @@ export const FEATURED_ARTICLE: FeaturedArticle = {
     'Satu latihan mikro 2 menit untuk mengambil tindakan sebelum rasa cemas mengambil alih.',
   ],
   badge: 'Kajian Pilihan Minggu Ini',
+  imgSrc: 'https://i.pinimg.com/1200x/14/76/ed/1476eda31fca313224b7be6a31697904.jpg',
 }
 
 export const ARTICLES: readonly Article[] = [
@@ -72,6 +75,7 @@ export const ARTICLES: readonly Article[] = [
     authorInitials: 'dr',
     authorName: 'dr. Aris S., Sp.KJ',
     artwork: 'cafe',
+    imgSrc: 'https://i.pinimg.com/736x/f1/2a/8d/f12a8d8f2aab7e1dfb72e1beba893213.jpg',
   },
   {
     id: 'a2',
@@ -84,6 +88,7 @@ export const ARTICLES: readonly Article[] = [
     authorInitials: 'S',
     authorName: 'Siti Wardah, M.Psi',
     artwork: 'journal',
+    imgSrc: 'https://i.pinimg.com/736x/8a/30/00/8a30004af75929166e5805eaf4e333f5.jpg',
   },
   {
     id: 'a3',
@@ -96,6 +101,7 @@ export const ARTICLES: readonly Article[] = [
     authorInitials: 'R',
     authorName: 'Rizky Darmawan, Psi.',
     artwork: 'plant',
+    imgSrc: 'https://i.pinimg.com/236x/94/10/0d/94100d275b842e83b6bf336821e7c299.jpg',
   },
   {
     id: 'a4',
@@ -108,6 +114,7 @@ export const ARTICLES: readonly Article[] = [
     authorInitials: 'dr',
     authorName: 'dr. Aris S., Sp.KJ',
     artwork: 'window',
+    imgSrc: 'https://i.pinimg.com/1200x/7c/7e/c7/7c7ec77f63499dd67ea5ae19c288a536.jpg',
   },
 ]
 

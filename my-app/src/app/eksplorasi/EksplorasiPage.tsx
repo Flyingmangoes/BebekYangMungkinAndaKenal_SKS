@@ -10,9 +10,9 @@ import {
   LifeBuoy,
   Share2,
   ShieldCheck,
-} from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import {
   ALL_TOPICS,
@@ -22,39 +22,42 @@ import {
   SAFE_NOTICE,
   TOPICS,
   TOTAL_NOTES,
-} from '@/app/eksplorasi/eksplorasiService'
-import type { Article } from '@/app/eksplorasi/eksplorasiService'
-import { Artwork } from '@/components/ui/Artwork'
-import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
-import { Chip } from '@/components/ui/Chip'
-import { Eyebrow } from '@/components/ui/Eyebrow'
-import { LinkButton } from '@/components/ui/LinkButton'
-import { SectionHeader } from '@/components/ui/SectionHeader'
+} from "@/app/eksplorasi/eksplorasiService";
+import type { Article } from "@/app/eksplorasi/eksplorasiService";
+import { Artwork } from "@/components/ui/Artwork";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Chip } from "@/components/ui/Chip";
+import { Eyebrow } from "@/components/ui/Eyebrow";
+import { LinkButton } from "@/components/ui/LinkButton";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 
 export function EksplorasiPage() {
-  const navigate = useNavigate()
-  const [activeTopic, setActiveTopic] = useState<string>(ALL_TOPICS)
-  const [savedIds, setSavedIds] = useState<readonly string[]>([])
-  const [loadedArticles, setLoadedArticles] = useState<readonly Article[]>()
+  const navigate = useNavigate();
+  const [activeTopic, setActiveTopic] = useState<string>(ALL_TOPICS);
+  const [savedIds, setSavedIds] = useState<readonly string[]>([]);
+  const [loadedArticles, setLoadedArticles] = useState<readonly Article[]>();
 
-  const articles = filterArticles(activeTopic)
-  const isFeaturedVisible = activeTopic === ALL_TOPICS || activeTopic === FEATURED_ARTICLE.topic
+  const articles = filterArticles(activeTopic);
+  const isFeaturedVisible =
+    activeTopic === ALL_TOPICS || activeTopic === FEATURED_ARTICLE.topic;
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      setLoadedArticles(filterArticles(activeTopic))
-    })
+      setLoadedArticles(filterArticles(activeTopic));
+    });
 
     return () => {
-      window.cancelAnimationFrame(frame)
-    }
-  }, [activeTopic])
+      window.cancelAnimationFrame(frame);
+    };
+  }, [activeTopic]);
 
   function toggleSaved(id: string) {
     setSavedIds((previous) =>
-      previous.includes(id) ? previous.filter((savedId) => savedId !== id) : [...previous, id],
-    )
+      previous.includes(id)
+        ? previous.filter((savedId) => savedId !== id)
+        : [...previous, id],
+    );
   }
 
   return (
@@ -65,35 +68,46 @@ export function EksplorasiPage() {
         title={EKSPLORASI_HEADER.title}
         description={EKSPLORASI_HEADER.description}
         action={
-          <Card tone="muted" className="flex items-center gap-3 px-4 py-3 lg:px-4 lg:py-3">
+          <Card
+            tone="muted"
+            className="flex items-center gap-3 px-4 py-3 lg:px-4 lg:py-3"
+          >
             <Coffee size={16} className="text-ink-700" aria-hidden="true" />
             <div className="flex flex-col">
-              <p className="text-xs font-semibold text-ink-900">{EKSPLORASI_HEADER.paceLabel}</p>
-              <p className="text-[10px] text-ink-500">{EKSPLORASI_HEADER.paceHint}</p>
+              <p className="text-xs font-semibold text-ink-900">
+                {EKSPLORASI_HEADER.paceLabel}
+              </p>
+              <p className="text-[10px] text-ink-500">
+                {EKSPLORASI_HEADER.paceHint}
+              </p>
             </div>
           </Card>
         }
       />
 
       {/* Filter topik */}
-      <div className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0" role="group" aria-label="Filter topik">
+      <div
+        className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:px-0"
+        role="group"
+        aria-label="Filter topik"
+      >
         <div className="flex w-max gap-2 lg:w-auto lg:flex-wrap">
           {TOPICS.map((topic) => {
-            const isActive = topic === activeTopic
+            const isActive = topic === activeTopic;
 
             return (
               <Chip
                 key={topic}
-                tone={isActive ? 'dark' : 'outline'}
+                tone={isActive ? "dark" : "outline"}
                 active={isActive}
                 className="px-4 py-2 text-xs font-medium"
                 onClick={() => {
-                  setActiveTopic(topic)
+                  setActiveTopic(topic);
                 }}
               >
                 {topic}
               </Chip>
-            )
+            );
           })}
         </div>
       </div>
@@ -104,13 +118,26 @@ export function EksplorasiPage() {
           as="article"
           className="grid cursor-pointer gap-6 transition-shadow hover:shadow-md md:grid-cols-[1fr_1.3fr] md:items-center lg:p-8"
           onClick={(event) => {
-            if (event.target instanceof Element && event.target.closest('button')) return
-            void navigate('/topic/detail')
+            if (
+              event.target instanceof Element &&
+              event.target.closest("button")
+            )
+              return;
+            void navigate("/topic/detail");
           }}
         >
           <Artwork variant="window" className="min-h-56 md:min-h-72">
+            <img
+              src="https://i.pinimg.com/1200x/14/76/ed/1476eda31fca313224b7be6a31697904.jpg"
+              alt="Ilustrasi bacaan"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+
             <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-ink-900">
-              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-clay-500" />
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 rounded-full bg-clay-500"
+              />
               {FEATURED_ARTICLE.badge}
             </span>
           </Artwork>
@@ -139,8 +166,15 @@ export function EksplorasiPage() {
               </p>
               <ul className="flex flex-col gap-1.5">
                 {FEATURED_ARTICLE.summaryPoints.map((point) => (
-                  <li key={point} className="flex items-start gap-2 text-xs leading-relaxed text-ink-700">
-                    <Check size={12} className="mt-0.5 shrink-0 text-pelan-600" aria-hidden="true" />
+                  <li
+                    key={point}
+                    className="flex items-start gap-2 text-xs leading-relaxed text-ink-700"
+                  >
+                    <Check
+                      size={12}
+                      className="mt-0.5 shrink-0 text-pelan-600"
+                      aria-hidden="true"
+                    />
                     {point}
                   </li>
                 ))}
@@ -153,13 +187,24 @@ export function EksplorasiPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  ariaLabel={savedIds.includes('featured') ? 'Hapus dari simpanan' : 'Simpan esai'}
-                  icon={savedIds.includes('featured') ? BookmarkCheck : Bookmark}
+                  ariaLabel={
+                    savedIds.includes("featured")
+                      ? "Hapus dari simpanan"
+                      : "Simpan esai"
+                  }
+                  icon={
+                    savedIds.includes("featured") ? BookmarkCheck : Bookmark
+                  }
                   onClick={() => {
-                    toggleSaved('featured')
+                    toggleSaved("featured");
                   }}
                 />
-                <Button variant="ghost" size="sm" ariaLabel="Bagikan esai" icon={Share2} />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  ariaLabel="Bagikan esai"
+                  icon={Share2}
+                />
               </div>
             </div>
           </div>
@@ -170,9 +215,12 @@ export function EksplorasiPage() {
       <section className="flex flex-col gap-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <h2 className="font-serif text-2xl font-medium text-ink-900">Eksplorasi Bacaan Bernutrisi</h2>
+            <h2 className="font-serif text-2xl font-medium text-ink-900">
+              Eksplorasi Bacaan Bernutrisi
+            </h2>
             <p className="text-xs text-ink-500">
-              Topik-topik yang sering luput dibicarakan, dikupas tanpa istilah media yang rumit.
+              Topik-topik yang sering luput dibicarakan, dikupas tanpa istilah
+              media yang rumit.
             </p>
           </div>
           <p className="text-[11px] text-ink-500">
@@ -195,12 +243,13 @@ export function EksplorasiPage() {
           </div>
         ) : loadedArticles.length === 0 ? (
           <Card tone="muted" className="text-center text-sm text-ink-500">
-            Belum ada esai untuk topik ini. Coba topik lain, atau kembali lagi nanti.
+            Belum ada esai untuk topik ini. Coba topik lain, atau kembali lagi
+            nanti.
           </Card>
         ) : (
           <div className="grid gap-5 md:grid-cols-2">
             {loadedArticles.map((article) => {
-              const isSaved = savedIds.includes(article.id)
+              const isSaved = savedIds.includes(article.id);
 
               return (
                 <Card
@@ -208,11 +257,20 @@ export function EksplorasiPage() {
                   as="article"
                   className="flex cursor-pointer flex-col gap-3 p-3 transition-shadow hover:shadow-md lg:p-3"
                   onClick={(event) => {
-                    if (event.target instanceof Element && event.target.closest('button')) return
-                    void navigate('/topic/detail')
+                    if (
+                      event.target instanceof Element &&
+                      event.target.closest("button")
+                    )
+                      return;
+                    void navigate("/topic/detail");
                   }}
                 >
                   <Artwork variant={article.artwork} className="min-h-44">
+                    <img
+                      src={article.imgSrc}
+                      alt="Ilustrasi bacaan"
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
                     <span className="absolute top-3 left-3 rounded-md bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-ink-900">
                       {article.topic}
                     </span>
@@ -227,7 +285,9 @@ export function EksplorasiPage() {
                     <h3 className="font-serif text-lg font-medium leading-snug text-ink-900">
                       {article.title}
                     </h3>
-                    <p className="text-xs leading-relaxed text-ink-500">{article.excerpt}</p>
+                    <p className="text-xs leading-relaxed text-ink-500">
+                      {article.excerpt}
+                    </p>
                     <div className="mt-1 flex items-center justify-between gap-2">
                       <p className="flex items-center gap-2 text-[11px] text-ink-500">
                         <span
@@ -240,9 +300,13 @@ export function EksplorasiPage() {
                       </p>
                       <button
                         type="button"
-                        aria-label={isSaved ? `Hapus ${article.title} dari simpanan` : `Simpan ${article.title}`}
+                        aria-label={
+                          isSaved
+                            ? `Hapus ${article.title} dari simpanan`
+                            : `Simpan ${article.title}`
+                        }
                         onClick={() => {
-                          toggleSaved(article.id)
+                          toggleSaved(article.id);
                         }}
                         className="rounded-md p-1.5 text-ink-500 transition-colors hover:bg-cream-200 hover:text-ink-900"
                       >
@@ -255,22 +319,29 @@ export function EksplorasiPage() {
                     </div>
                   </div>
                 </Card>
-              )
+              );
             })}
           </div>
         )}
       </section>
 
       {/* Ruang aman */}
-      <Card tone="blush" className="flex flex-wrap items-center justify-between gap-4">
+      <Card
+        tone="blush"
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
         <div className="flex items-start gap-4">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-clay-500">
             <LifeBuoy size={18} aria-hidden="true" />
           </span>
           <div className="flex max-w-3xl flex-col gap-1.5">
             <Eyebrow tone="clay">{SAFE_NOTICE.label}</Eyebrow>
-            <p className="text-sm leading-relaxed text-ink-900">{SAFE_NOTICE.body}</p>
-            <p className="text-[11px] text-ink-500">{SAFE_NOTICE.hotlineNote}</p>
+            <p className="text-sm leading-relaxed text-ink-900">
+              {SAFE_NOTICE.body}
+            </p>
+            <p className="text-[11px] text-ink-500">
+              {SAFE_NOTICE.hotlineNote}
+            </p>
           </div>
         </div>
         <LinkButton to="/bantuan" variant="clay" iconRight={ExternalLink}>
@@ -278,5 +349,5 @@ export function EksplorasiPage() {
         </LinkButton>
       </Card>
     </div>
-  )
+  );
 }

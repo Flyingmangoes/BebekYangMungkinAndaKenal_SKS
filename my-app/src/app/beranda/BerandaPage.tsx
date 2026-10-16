@@ -8,40 +8,40 @@ import {
   Lock,
   RefreshCw,
   Zap,
-} from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-import { getBerandaContent } from '@/app/beranda/berandaService'
-import { Artwork } from '@/components/ui/Artwork'
-import { Button } from '@/components/ui/Button'
-import { Card } from '@/components/ui/Card'
-import { Chip } from '@/components/ui/Chip'
-import { Eyebrow } from '@/components/ui/Eyebrow'
-import { LinkButton } from '@/components/ui/LinkButton'
-import { SectionHeader } from '@/components/ui/SectionHeader'
-import { Sparkline } from '@/components/ui/Sparkline'
-import { cn } from '@/lib/cn'
-import { MOOD_OPTIONS } from '@/lib/moods'
-import type { MoodId } from '@/lib/moods'
-import { CURRENT_USER } from '@/lib/userProfile'
+import { getBerandaContent } from "@/app/beranda/berandaService";
+import { Artwork } from "@/components/ui/Artwork";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Chip } from "@/components/ui/Chip";
+import { Eyebrow } from "@/components/ui/Eyebrow";
+import { LinkButton } from "@/components/ui/LinkButton";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { Sparkline } from "@/components/ui/Sparkline";
+import { cn } from "@/lib/cn";
+import { MOOD_OPTIONS } from "@/lib/moods";
+import type { MoodId } from "@/lib/moods";
+import { CURRENT_USER } from "@/lib/userProfile";
 
 export function BerandaPage() {
-  const content = getBerandaContent(CURRENT_USER.name)
-  const [selectedMood, setSelectedMood] = useState<MoodId | null>('baik')
-  const [isQuestSnoozed, setIsQuestSnoozed] = useState(false)
-  const [isReadingSaved, setIsReadingSaved] = useState(false)
-  const [isQuestLoading, setIsQuestLoading] = useState(true)
+  const content = getBerandaContent(CURRENT_USER.name);
+  const [selectedMood, setSelectedMood] = useState<MoodId | null>("baik");
+  const [isQuestSnoozed, setIsQuestSnoozed] = useState(false);
+  const [isReadingSaved, setIsReadingSaved] = useState(false);
+  const [isQuestLoading, setIsQuestLoading] = useState(true);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
-      setIsQuestLoading(false)
-    })
+      setIsQuestLoading(false);
+    });
 
     return () => {
-      window.cancelAnimationFrame(frame)
-    }
-  }, [])
+      window.cancelAnimationFrame(frame);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col gap-8">
@@ -49,7 +49,10 @@ export function BerandaPage() {
       <section className="flex flex-wrap items-start justify-between gap-5">
         <div className="flex max-w-2xl flex-col gap-3">
           <Chip tone="mint" className="self-start">
-            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-pelan-500" />
+            <span
+              aria-hidden="true"
+              className="h-1.5 w-1.5 rounded-full bg-pelan-500"
+            />
             {content.heroBadge}
           </Chip>
           <h1 className="font-serif text-3xl font-medium leading-tight text-ink-900 lg:text-4xl">
@@ -66,7 +69,9 @@ export function BerandaPage() {
           </span>
           <div className="flex flex-col">
             <Eyebrow>{content.breathLabel}</Eyebrow>
-            <p className="text-sm font-semibold text-ink-900">{content.breathValue}</p>
+            <p className="text-sm font-semibold text-ink-900">
+              {content.breathValue}
+            </p>
           </div>
         </Card>
       </section>
@@ -83,7 +88,7 @@ export function BerandaPage() {
           <button
             type="button"
             onClick={() => {
-              setSelectedMood(null)
+              setSelectedMood(null);
             }}
             className="inline-flex items-center gap-1.5 text-xs font-medium text-ink-500 transition-colors hover:text-ink-900"
           >
@@ -94,7 +99,7 @@ export function BerandaPage() {
 
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
           {MOOD_OPTIONS.map((mood) => {
-            const isSelected = mood.id === selectedMood
+            const isSelected = mood.id === selectedMood;
 
             return (
               <button
@@ -102,19 +107,21 @@ export function BerandaPage() {
                 type="button"
                 aria-pressed={isSelected}
                 onClick={() => {
-                  setSelectedMood(mood.id)
+                  setSelectedMood(mood.id);
                 }}
                 className={cn(
-                  'relative flex flex-col items-start gap-1.5 rounded-xl p-3.5 text-left transition-colors',
+                  "relative flex flex-col items-start gap-1.5 rounded-xl p-3.5 text-left transition-colors",
                   isSelected
-                    ? 'bg-pelan-100 ring-1 ring-pelan-300'
-                    : 'bg-cream-200/70 hover:bg-cream-200',
+                    ? "bg-pelan-100 ring-1 ring-pelan-300"
+                    : "bg-cream-200/70 hover:bg-cream-200",
                 )}
               >
                 <span className="text-lg" aria-hidden="true">
                   {mood.emoji}
                 </span>
-                <span className="text-sm font-semibold text-ink-900">{mood.label}</span>
+                <span className="text-sm font-semibold text-ink-900">
+                  {mood.label}
+                </span>
                 <span className="text-[11px] text-ink-500">{mood.hint}</span>
                 {isSelected ? (
                   <span className="absolute top-3 right-3 flex h-4 w-4 items-center justify-center rounded-full bg-pelan-700 text-white">
@@ -122,15 +129,15 @@ export function BerandaPage() {
                   </span>
                 ) : null}
               </button>
-            )
+            );
           })}
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-ink-500">
           <p className="flex items-center gap-1.5">
             <Lock size={11} aria-hidden="true" />
-            Cukup pilih satu atau lewati jika belum siap berbagi. Penilaian ini privat dan
-            tanpa target numerik.
+            Cukup pilih satu atau lewati jika belum siap berbagi. Penilaian ini
+            privat dan tanpa target numerik.
           </p>
           <p className="italic">Tersimpan otomatis</p>
         </div>
@@ -149,63 +156,78 @@ export function BerandaPage() {
             </div>
           </Card>
         ) : (
-        <Card className="flex flex-col gap-5 lg:p-8">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <Chip tone="clay">{content.quest.tag}</Chip>
-              <Chip tone="outline" icon={Clock}>
-                {content.quest.durationLabel}
-              </Chip>
-              <Chip tone="mint" icon={Zap}>
-                {content.quest.energyLabel}
-              </Chip>
+          <Card className="flex flex-col gap-5 lg:p-8">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <Chip tone="clay">{content.quest.tag}</Chip>
+                <Chip tone="outline" icon={Clock}>
+                  {content.quest.durationLabel}
+                </Chip>
+                <Chip tone="mint" icon={Zap}>
+                  {content.quest.energyLabel}
+                </Chip>
+              </div>
+              <span className="text-[11px] text-ink-400">
+                {content.quest.questNumber}
+              </span>
             </div>
-            <span className="text-[11px] text-ink-400">{content.quest.questNumber}</span>
-          </div>
 
-          <h2 className="font-serif text-2xl font-medium leading-snug text-ink-900 lg:text-3xl">
-            {content.quest.title}
-          </h2>
-          <p className="text-sm leading-relaxed text-ink-500">{content.quest.body}</p>
+            <h2 className="font-serif text-2xl font-medium leading-snug text-ink-900 lg:text-3xl">
+              {content.quest.title}
+            </h2>
+            <p className="text-sm leading-relaxed text-ink-500">
+              {content.quest.body}
+            </p>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <LinkButton to="/quest" icon={Check}>
-              Mulai Sekarang
-            </LinkButton>
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setIsQuestSnoozed(true)
-              }}
-            >
-              Nanti Saja
-            </Button>
-            <LinkButton to="/quest" variant="ghost" icon={RefreshCw} size="sm">
-              Ganti Quest Sesuai Energiku
-            </LinkButton>
-          </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <LinkButton to="/quest" icon={Check}>
+                Mulai Sekarang
+              </LinkButton>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setIsQuestSnoozed(true);
+                }}
+              >
+                Nanti Saja
+              </Button>
+              <LinkButton
+                to="/quest"
+                variant="ghost"
+                icon={RefreshCw}
+                size="sm"
+              >
+                Ganti Quest Sesuai Energiku
+              </LinkButton>
+            </div>
 
-          <p className="text-xs italic text-ink-500" aria-live="polite">
-            {isQuestSnoozed
-              ? 'Oke, quest ini kami simpan untuk nanti. Tidak ada yang terlewat.'
-              : content.quest.note}
-          </p>
-        </Card>
+            <p className="text-xs italic text-ink-500" aria-live="polite">
+              {isQuestSnoozed
+                ? "Oke, quest ini kami simpan untuk nanti. Tidak ada yang terlewat."
+                : content.quest.note}
+            </p>
+          </Card>
         )}
 
         <Card tone="muted" as="aside" className="flex flex-col gap-4">
           <div className="flex items-center justify-between gap-2">
             <Eyebrow tone="mint">Pola teramati</Eyebrow>
-            <span className="text-[11px] text-ink-500">{content.pattern.periodLabel}</span>
+            <span className="text-[11px] text-ink-500">
+              {content.pattern.periodLabel}
+            </span>
           </div>
           <h2 className="font-serif text-xl font-medium leading-snug text-ink-900">
             {content.pattern.title}
           </h2>
-          <p className="text-sm italic leading-relaxed text-ink-500">“{content.pattern.quote}”</p>
+          <p className="text-sm italic leading-relaxed text-ink-500">
+            “{content.pattern.quote}”
+          </p>
 
           <div className="flex flex-col gap-2 rounded-xl bg-white p-3">
             <div className="flex items-start justify-between gap-2 text-[11px]">
-              <span className="max-w-24 text-ink-500">{content.pattern.chartLabel}</span>
+              <span className="max-w-24 text-ink-500">
+                {content.pattern.chartLabel}
+              </span>
               <Chip tone="mint">{content.pattern.trendLabel}</Chip>
             </div>
             <Sparkline
@@ -247,8 +269,17 @@ export function BerandaPage() {
           }
         />
 
-        <Card as="article" className="grid gap-6 md:grid-cols-[1fr_1.15fr] md:items-center lg:p-6">
+        <Card
+          as="article"
+          className="grid gap-6 md:grid-cols-[1fr_1.15fr] md:items-center lg:p-6"
+        >
           <Artwork variant="lamp" className="min-h-56 md:min-h-72">
+            <img
+              src="https://i.pinimg.com/736x/11/04/eb/1104eb4d4d50e8acb031ddeefaf713cb.jpg"
+              alt="Ilustrasi bacaan"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+
             <span className="absolute top-3 left-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-ink-900">
               {content.reading.badge}
             </span>
@@ -256,14 +287,18 @@ export function BerandaPage() {
 
           <div className="flex flex-col gap-4">
             <p className="flex items-center gap-2 text-[11px] text-ink-500">
-              <span className="font-semibold text-clay-500">{content.reading.category}</span>
+              <span className="font-semibold text-clay-500">
+                {content.reading.category}
+              </span>
               <span aria-hidden="true">•</span>
               {content.reading.readingTime}
             </p>
             <h3 className="font-serif text-2xl font-medium leading-snug text-ink-900 lg:text-3xl">
               {content.reading.title}
             </h3>
-            <p className="text-sm leading-relaxed text-ink-500">{content.reading.excerpt}</p>
+            <p className="text-sm leading-relaxed text-ink-500">
+              {content.reading.excerpt}
+            </p>
 
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="flex items-center gap-2 text-[11px] text-ink-500">
@@ -280,10 +315,10 @@ export function BerandaPage() {
                 size="sm"
                 iconRight={isReadingSaved ? BookmarkCheck : Bookmark}
                 onClick={() => {
-                  setIsReadingSaved((previous) => !previous)
+                  setIsReadingSaved((previous) => !previous);
                 }}
               >
-                {isReadingSaved ? 'Tersimpan' : 'Simpan & Baca Nanti'}
+                {isReadingSaved ? "Tersimpan" : "Simpan & Baca Nanti"}
               </Button>
             </div>
           </div>
@@ -291,12 +326,15 @@ export function BerandaPage() {
       </section>
 
       {/* Penutup */}
-      <Card tone="muted" className="flex flex-col items-center gap-2 py-8 text-center">
+      <Card
+        tone="muted"
+        className="flex flex-col items-center gap-2 py-8 text-center"
+      >
         <p className="max-w-xl font-serif text-lg italic text-ink-700">
           “{content.closingQuote}”
         </p>
         <p className="text-[11px] text-ink-500">{content.closingAuthor}</p>
       </Card>
     </div>
-  )
+  );
 }

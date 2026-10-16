@@ -129,7 +129,7 @@ export function QuestPage() {
             </h2>
             <p className="text-sm leading-relaxed text-ink-500 lg:text-[15px]">{loadedQuest.body}</p>
 
-            <Artwork variant="cup" className="min-h-48 items-end justify-between p-4">
+
               <div className="flex w-full items-end justify-between gap-3 text-white">
                 <div className="flex items-center gap-3">
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 backdrop-blur">
@@ -147,7 +147,7 @@ export function QuestPage() {
                   {loadedQuest.soundLabel}
                 </span>
               </div>
-            </Artwork>
+            
 
             <dl className="grid gap-3 rounded-xl bg-cream-200/60 p-4 text-xs sm:grid-cols-3">
               <div className="flex flex-col gap-1">
