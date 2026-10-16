@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ChangeEvent } from 'react'
 
 import { ENERGY_OPTIONS } from '@/app/quest/questService'
@@ -12,6 +12,8 @@ import { SectionHeader } from '@/components/ui/SectionHeader'
 import { cn } from '@/lib/cn'
 import { MOOD_OPTIONS } from '@/lib/moods'
 import type { MoodId } from '@/lib/moods'
+import { ApiError, checkIn as submitCheckIn, getStreak, type StreakSummary } from '@/lib/api'
+import { useAuth } from '@/lib/useAuth'
 
 type CheckInStep = 0 | 1 | 2
 
@@ -22,11 +24,81 @@ const STEP_TITLES: Record<CheckInStep, string> = {
 }
 
 export function CheckInPage() {
+  const { isAuthenticated } = useAuth()
   const [step, setStep] = useState<CheckInStep>(0)
   const [mood, setMood] = useState<MoodId | null>(null)
   const [energy, setEnergy] = useState<EnergyLevel | null>(null)
   const [note, setNote] = useState('')
   const [isSaved, setIsSaved] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [streak, setStreak] = useState<StreakSummary | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+    let active = true
+    getStreak()
+      .then((summary) => {
+        if (active) {
+          setStreak(summary)
+          if (summary.checkedInToday) setIsSaved(true)
+        }
+      })
+      .catch((error: unknown) => {
+        if (active) {
+          setErrorMessage(
+            error instanceof ApiError ? error.message : 'Tidak dapat memuat status check-in.',
+          )
+        }
+      })
+    return () => {
+      active = false
+    }
+  }, [isAuthenticated])
+
+  async function saveCheckIn() {
+    setIsSaving(true)
+    setErrorMessage(null)
+    try {
+      const result = await submitCheckIn()
+      setStreak(result.streak)
+      setIsSaved(true)
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 409) {
+        try {
+          const summary = await getStreak()
+          setStreak(summary)
+          setIsSaved(summary.checkedInToday)
+          setErrorMessage('Kamu sudah melakukan check-in hari ini.')
+        } catch (refreshError) {
+          setErrorMessage(
+            refreshError instanceof ApiError
+              ? refreshError.message
+              : 'Tidak dapat memuat status check-in.',
+          )
+        }
+      } else {
+        setErrorMessage(
+          error instanceof ApiError ? error.message : 'Check-in gagal disimpan. Coba lagi.',
+        )
+      }
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="mx-auto flex max-w-xl flex-col gap-4">
+        <SectionHeader
+          level="h1"
+          title="Masuk untuk check-in"
+          description="Check-in dan streak disimpan pada akunmu."
+        />
+        <LinkButton to="/login">Masuk ke akun</LinkButton>
+      </div>
+    )
+  }
 
   function handleNoteChange(event: ChangeEvent<HTMLTextAreaElement>) {
     setNote(event.target.value)
@@ -51,8 +123,9 @@ export function CheckInPage() {
           </span>
           <h1 className="font-serif text-3xl font-medium text-ink-900">Terima kasih sudah berhenti sejenak.</h1>
           <p className="text-sm leading-relaxed text-ink-700">
-            Check-in-mu tersimpan di perangkat ini. Tidak ada nilai, tidak ada target. Kalau mau,
-            kami punya satu quest kecil yang sesuai dengan energimu.
+            Tanggal check-in dan streak tersimpan di akunmu. API saat ini hanya menyimpan tanggal
+            check-in; pilihan suasana, energi, dan catatan di layar ini tidak dikirim atau disimpan.
+            {streak ? ` Streak saat ini: ${streak.currentStreak} hari.` : ''}
           </p>
           <div className="flex flex-wrap gap-3">
             <LinkButton to="/quest" iconRight={ArrowRight}>
@@ -76,8 +149,14 @@ export function CheckInPage() {
         eyebrow={`Langkah check-in ${step + 1} dari 3`}
         eyebrowTone="clay"
         title={STEP_TITLES[step]}
-        description="Tidak ada jawaban yang salah. Kamu boleh melewati langkah mana pun."
+        description="Tanggal check-in dan streak akan tersimpan ke akunmu. Pilihan suasana, energi, dan catatan hanya untuk refleksi di layar ini."
       />
+
+      {errorMessage ? (
+        <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+          {errorMessage}
+        </p>
+      ) : null}
 
       <div className="flex gap-2" role="presentation">
         {[0, 1, 2].map((index) => (
@@ -149,7 +228,7 @@ export function CheckInPage() {
 
         {step === 2 ? (
           <div className="flex flex-col gap-2">
-            <Eyebrow>Catatan singkat (opsional)</Eyebrow>
+            <Eyebrow>Catatan singkat (tidak disimpan ke akun)</Eyebrow>
             <label htmlFor="check-in-note" className="sr-only">
               Catatan singkat
             </label>
@@ -176,11 +255,10 @@ export function CheckInPage() {
         ) : (
           <Button
             icon={Check}
-            onClick={() => {
-              setIsSaved(true)
-            }}
+            onClick={saveCheckIn}
+            disabled={isSaving}
           >
-            Simpan Check-In
+            {isSaving ? 'Menyimpan...' : 'Simpan Check-In'}
           </Button>
         )}
       </div>

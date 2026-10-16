@@ -7,9 +7,11 @@ import {
   Info,
   Sprout,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
+import { ApiError, getPh9Questions, type Ph9Question } from '@/lib/api'
+import { getPh9Draft, savePh9Answer } from '@/lib/ph9Draft'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Chip } from '@/components/ui/Chip'
@@ -52,13 +54,51 @@ export function Phq9QuestionPage() {
     Number.isInteger(parsedQuestion) && parsedQuestion >= 1 && parsedQuestion <= 9
       ? parsedQuestion
       : 1
-  const [selectedVal, setSelectedVal] = useState<number | null>(null)
+  const [questions, setQuestions] = useState<Ph9Question[]>([])
+  const [answers, setAnswers] = useState(getPh9Draft)
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const totalQuestions = 9
   const progressPercent = (currentQuestion / totalQuestions) * 100
+  const question = questions.find((item) => item.questionIndex === currentQuestion)
+  const selectedVal =
+    answers.find((answer) => answer.questionId === question?.questionId)?.answerValue ?? null
+
+  useEffect(() => {
+    let active = true
+    getPh9Questions('id')
+      .then(({ questions: fetchedQuestions }) => {
+        if (active) setQuestions(fetchedQuestions)
+      })
+      .catch((error: unknown) => {
+        if (active) {
+          setErrorMessage(
+            error instanceof ApiError ? error.message : 'Tidak dapat memuat pertanyaan. Coba lagi.',
+          )
+        }
+      })
+      .finally(() => {
+        if (active) setIsLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
+
+  function handleAnswer(value: number) {
+    if (!question) return
+    const answer = { questionId: question.questionId, answerValue: value }
+    savePh9Answer(answer)
+    setAnswers((current) => [
+      ...current.filter((item) => item.questionId !== question.questionId),
+      answer,
+    ])
+  }
 
   const handleNext = () => {
-    if (selectedVal === null) return
+    if (selectedVal === null || !question) return
 
     if (currentQuestion === totalQuestions) {
       navigate('/register')
@@ -70,6 +110,31 @@ export function Phq9QuestionPage() {
 
   const handlePrevious = () => {
     navigate(-1)
+  }
+
+  if (isLoading || errorMessage || !question) {
+    return (
+      <Card className="mx-auto flex w-full max-w-xl flex-col gap-3 p-5">
+        {isLoading ? (
+          <p role="status" className="text-sm text-ink-500">Memuat pertanyaan...</p>
+        ) : errorMessage ? (
+          <>
+            <p role="alert" className="text-sm text-red-700">{errorMessage}</p>
+            <Button
+              variant="secondary"
+              onClick={() => window.location.reload()}
+              className="self-start"
+            >
+              Coba lagi
+            </Button>
+          </>
+        ) : (
+          <p role="alert" className="text-sm text-red-700">
+            Pertanyaan PHQ-9 nomor {currentQuestion} tidak tersedia dari server.
+          </p>
+        )}
+      </Card>
+    )
   }
 
   return (
@@ -104,13 +169,8 @@ export function Phq9QuestionPage() {
 
         {/* Question Title */}
         <h1 className="font-serif text-xl font-medium leading-snug text-ink-900 lg:text-2xl">
-          Kurang berminat atau kurang bergairah dalam melakukan hal-hal yang biasanya kamu sukai?
+          {question.questionBody}
         </h1>
-
-        {/* Everyday Context */}
-        <p className="text-sm leading-relaxed text-ink-500">
-          Misalnya hobi, ngobrol santai bareng teman, atau hal-hal kecil yang biasanya bikin kamu tersenyum tapi belakangan terasa hambar.
-        </p>
       </Card>
 
       {/* Options Stack */}
@@ -124,7 +184,7 @@ export function Phq9QuestionPage() {
               type="button"
               role="radio"
               aria-checked={isSelected}
-              onClick={() => setSelectedVal(option.val)}
+              onClick={() => handleAnswer(option.val)}
               className={cn(
                 'flex w-full items-center justify-between rounded-xl p-4 text-left transition-all active:scale-[0.99]',
                 isSelected

@@ -46,7 +46,11 @@ export class Ph9Repository implements Ph9RepositoryInterface {
   }
 
   async listQuestions(language: Ph9Language): Promise<Ph9QuestionView[]> {
-    const rows = await this.db.ph9Question.findMany({
+    const rows: Array<{
+      questionId: string;
+      questionIndex: number;
+      translations: Array<{ questionBody: string }>;
+    }> = await this.db.ph9Question.findMany({
       select: {
         questionId: true,
         questionIndex: true,

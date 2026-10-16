@@ -37,8 +37,10 @@ async function main(): Promise<void> {
   const data = loadSeed();
 
   await prisma.$transaction(async (tx) => {
+    const txClient = tx as any;
+
     for (let questionIndex = 1; questionIndex <= 9; questionIndex++) {
-      const question = await tx.ph9Question.upsert({
+      const question = await txClient.ph9Question.upsert({
         where: { questionIndex },
         update: {},
         create: { questionIndex },
@@ -46,7 +48,7 @@ async function main(): Promise<void> {
 
       for (const language of LANGUAGES) {
         const questionBody = clean(data[language][questionIndex - 1].questionBody);
-        await tx.ph9QuestionTranslation.upsert({
+        await txClient.ph9QuestionTranslation.upsert({
           where: { questionId_language: { questionId: question.questionId, language } },
           update: { questionBody },
           create: { questionId: question.questionId, language, questionBody },

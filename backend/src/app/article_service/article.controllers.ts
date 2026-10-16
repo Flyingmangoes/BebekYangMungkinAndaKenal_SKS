@@ -22,12 +22,6 @@ export const ArticleController = (articleService: ArticleService) => ({
 
   async list(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = getUserId(req)
-      if(!userId) {
-          res.status(401).json("Not authenticated")
-          return
-      }
-
       const page = Number(req.query.page ?? 1);
       const limit = Number(req.query.limit ?? 10);
       res.status(200).json(await articleService.list(page, limit));

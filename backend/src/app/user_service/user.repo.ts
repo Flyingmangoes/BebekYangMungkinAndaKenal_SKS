@@ -7,9 +7,12 @@ const SELF_OMIT = { passwordHashed: true, consentSrc: true } as const;
 
 const toDomainError = (error: unknown): never => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
-    if (error.code === "P2002") throw new AuthError("ACCOUNT_CONFLICT"); 
-    if (error.code === "P2025") throw new AuthError("USER_NOT_FOUND");   
+    const prismaError = error as Prisma.PrismaClientKnownRequestError & { code?: string };
+
+    if (prismaError.code === "P2002") throw new AuthError("ACCOUNT_CONFLICT");
+    if (prismaError.code === "P2025") throw new AuthError("USER_NOT_FOUND");
   }
+
   throw error;
 };
 

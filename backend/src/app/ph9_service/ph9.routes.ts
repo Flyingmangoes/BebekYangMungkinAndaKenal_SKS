@@ -14,7 +14,7 @@ export interface Ph9RouterDeps {
 export const createPh9Router = ({ controller, requireAuth, submitLimiter, validate }: Ph9RouterDeps): Router => {
     const router = Router();
 
-    router.get("/questions", requireAuth, controller.getQuestions);
+    router.get("/questions", controller.getQuestions);
     router.post("/submissions", requireAuth, submitLimiter, validate(submitPh9Schema), controller.submit);
     router.get("/submissions", requireAuth, controller.listSubmissions);
     router.get("/submissions/:submissionId", requireAuth, controller.getSubmission);

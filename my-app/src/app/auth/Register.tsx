@@ -21,6 +21,8 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Chip } from '@/components/ui/Chip'
 import { useAuth } from '@/lib/useAuth'
+import { ApiError, login, register, setAuthTokens, submitPh9 } from '@/lib/api'
+import { clearPh9Draft, getPh9Draft } from '@/lib/ph9Draft'
 import logo from '@/assets/logo.png'
 
 export function Phq9RegisterPage() {
@@ -29,27 +31,52 @@ export function Phq9RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const [formData, setFormData] = useState({
+    username: '',
     name: '',
     email: '',
     password: '',
+    emailConsent: false,
+    phoneNumberConsent: false,
   })
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setErrorMessage(null)
 
-    // Simulasi proses registrasi dan verifikasi
-    setTimeout(() => {
-      setIsLoading(false)
+    try {
+      await register({
+        username: formData.username,
+        fullname: formData.name,
+        email: formData.email,
+        password: formData.password,
+        emailConsent: formData.emailConsent,
+        phoneNumberConsent: formData.phoneNumberConsent,
+      })
+      const tokens = await login({ email: formData.email, password: formData.password })
+      setAuthTokens(tokens)
+      setIsAuthenticated(true)
+
+      const answers = getPh9Draft()
+      if (answers.length === 9) {
+        await submitPh9({ language: 'id', answers })
+        clearPh9Draft()
+      }
+
       setIsSuccess(true)
-
-      setTimeout(() => {
-        setIsAuthenticated(true)
-        navigate('/')
-      }, 800)
-    }, 1200)
+      window.setTimeout(() => navigate(answers.length === 9 ? '/quest' : '/'), 800)
+    } catch (error) {
+      setErrorMessage(
+        error instanceof ApiError
+          ? error.message
+          : 'Akun mungkin sudah dibuat, tetapi permintaan belum selesai. Coba masuk untuk melanjutkan.',
+      )
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -76,7 +103,8 @@ export function Phq9RegisterPage() {
         </h1>
         <p className="mt-2 max-w-sm text-sm leading-relaxed text-ink-500">
           Jawaban self-assessment kamu sudah tersimpan sementara. Buat akun agar kamu bisa melihat
-          rangkuman dan rekomendasi micro-quest kapan saja.
+          rangkuman dan rekomendasi micro-quest kapan saja. Jawaban disimpan sementara di browser
+          ini sampai dikirim setelah pendaftaran.
         </p>
       </div>
 
@@ -91,7 +119,7 @@ export function Phq9RegisterPage() {
               <h2 className="text-sm font-semibold text-ink-900">Kuesioner 9 Pertanyaan Selesai</h2>
               <p className="mt-0.5 flex items-center gap-1 text-xs text-ink-500">
                 <ShieldCheck size={14} className="text-pelan-600" aria-hidden="true" />
-                <span>Tersimpan aman & siap diolah</span>
+                <span>Tersimpan sementara di browser ini</span>
               </p>
             </div>
           </div>
@@ -100,27 +128,32 @@ export function Phq9RegisterPage() {
           </Chip>
         </div>
 
-        {/* Teaser Score Reveal */}
         <div className="flex items-center justify-between gap-3 rounded-xl bg-white/80 p-3 backdrop-blur-sm">
           <div className="flex flex-col">
             <span className="text-[10px] font-semibold tracking-wider text-ink-500 uppercase">
               Hasil Penilaian PHQ-9
             </span>
             <div className="mt-1 flex items-center gap-2">
-              <span className="font-serif text-base font-semibold text-ink-900 filter blur-xs select-none opacity-70">
-                Skor 14: Sedang
+              <span className="font-serif text-sm font-semibold text-ink-700">
+                Dihitung setelah dikirim
               </span>
               <Lock size={14} className="text-pelan-600" aria-hidden="true" />
             </div>
           </div>
           <p className="max-w-32.5 text-right text-xs leading-tight text-ink-500">
-            Gambaran kondisimu siap dianalisis dan dipersonalisasi
+            Hasil disimpan sesuai skor yang dihitung server
           </p>
         </div>
       </Card>
 
       {/* Registration Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {errorMessage ? (
+          <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+            {errorMessage}
+          </p>
+        ) : null}
+
         {/* Field 1: Nama Panggilan */}
         <div className="flex flex-col gap-1.5">
           <label htmlFor="reg-name" className="flex items-center justify-between text-xs font-medium text-ink-900">
@@ -133,12 +166,32 @@ export function Phq9RegisterPage() {
               id="reg-name"
               type="text"
               required
+              maxLength={100}
               placeholder="misal: Raya atau Danis"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               className="h-12 w-full rounded-xl bg-white pl-11 pr-4 text-sm text-ink-900 shadow-sm border border-cream-200/60 placeholder:text-ink-400 focus:border-pelan-500 focus:outline-none focus:ring-1 focus:ring-pelan-500"
             />
           </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="reg-username" className="text-xs font-medium text-ink-900">
+            Username
+          </label>
+          <input
+            id="reg-username"
+            type="text"
+            required
+            minLength={3}
+            maxLength={30}
+            pattern="[A-Za-z0-9_.]+"
+            autoComplete="username"
+            placeholder="huruf, angka, titik, atau garis bawah"
+            value={formData.username}
+            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            className="h-12 w-full rounded-xl border border-cream-200/60 bg-white px-4 text-sm text-ink-900 shadow-sm placeholder:text-ink-400 focus:border-pelan-500 focus:outline-none focus:ring-1 focus:ring-pelan-500"
+          />
         </div>
 
         {/* Field 2: Email */}
@@ -153,6 +206,7 @@ export function Phq9RegisterPage() {
               id="reg-email"
               type="email"
               required
+              maxLength={254}
               placeholder="emailkamu@kampus.ac.id atau gmail.com"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -160,6 +214,28 @@ export function Phq9RegisterPage() {
             />
           </div>
         </div>
+
+        <fieldset className="flex flex-col gap-2 rounded-xl bg-cream-100/60 p-3 text-xs text-ink-700">
+          <legend className="px-1 font-semibold text-ink-900">Pilihan komunikasi (opsional)</legend>
+          <label className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              checked={formData.emailConsent}
+              onChange={(e) => setFormData({ ...formData, emailConsent: e.target.checked })}
+              className="mt-0.5 accent-pelan-600"
+            />
+            <span>Saya bersedia menerima komunikasi melalui email.</span>
+          </label>
+          <label className="flex items-start gap-2">
+            <input
+              type="checkbox"
+              checked={formData.phoneNumberConsent}
+              onChange={(e) => setFormData({ ...formData, phoneNumberConsent: e.target.checked })}
+              className="mt-0.5 accent-pelan-600"
+            />
+            <span>Saya bersedia menerima komunikasi melalui nomor telepon.</span>
+          </label>
+        </fieldset>
 
         {/* Field 3: Kata Sandi */}
         <div className="flex flex-col gap-1.5">
@@ -174,6 +250,7 @@ export function Phq9RegisterPage() {
               type={showPassword ? 'text' : 'password'}
               required
               minLength={8}
+              maxLength={72}
               placeholder="Minimal 8 karakter aman"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}

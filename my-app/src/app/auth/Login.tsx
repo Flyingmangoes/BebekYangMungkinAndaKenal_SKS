@@ -18,6 +18,8 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Chip } from "@/components/ui/Chip";
 import { useAuth } from "@/lib/useAuth";
+import { ApiError, login, setAuthTokens, submitPh9 } from "@/lib/api";
+import { clearPh9Draft, getPh9Draft } from "@/lib/ph9Draft";
 
 import logo  from "@/assets/logo.png"
 
@@ -27,6 +29,7 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -34,20 +37,29 @@ export function LoginPage() {
     password: "",
   });
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage(null);
 
-    // Simulasi alur autentikasi login
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      const tokens = await login(formData);
+      setAuthTokens(tokens, rememberMe);
+      setIsAuthenticated(true);
+
+      const answers = getPh9Draft();
+      if (answers.length === 9) {
+        await submitPh9({ language: "id", answers });
+        clearPh9Draft();
+      }
+
       setIsSuccess(true);
-
-      setTimeout(() => {
-        setIsAuthenticated(true);
-        navigate("/");
-      }, 800);
-    }, 1000);
+      window.setTimeout(() => navigate(answers.length === 9 ? "/quest" : "/"), 800);
+    } catch (error) {
+      setErrorMessage(error instanceof ApiError ? error.message : "Tidak dapat terhubung ke server. Coba lagi.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -97,6 +109,11 @@ export function LoginPage() {
       {/* Main Form Container Card */}
       <Card className="flex flex-col gap-4 p-5">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {errorMessage ? (
+            <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-700">
+              {errorMessage}
+            </p>
+          ) : null}
           {/* Email Input */}
           <div className="flex flex-col gap-1.5">
             <label

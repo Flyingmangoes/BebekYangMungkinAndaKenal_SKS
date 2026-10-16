@@ -1,0 +1,2 @@
+ALTER TABLE "users"
+ADD COLUMN "privacy_consent" BOOLEAN NOT NULL DEFAULT false;

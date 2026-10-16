@@ -1,0 +1,38 @@
+# Database is Supabase (hosted). No local Postgres service.
+services:
+  # One-off job: applies Prisma migrations, then exits.
+  # Migrations need a session-capable connection, not the transaction pooler.
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: build
+    env_file: backend/.env
+    command: ["yarn", "prisma", "migrate", "deploy"]
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: runtime
+    restart: unless-stopped
+    env_file: backend/.env
+    environment:
+      HOST: 0.0.0.0
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: .
+      dockerfile: my-app/DockerFile
+      target: runtime
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      api:
+        condition: service_started

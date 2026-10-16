@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+npm-debug.log*
+Dockerfile
+docker-compose.yml
+.dockerignore
+# Regenerated inside the image by "prisma generate".
+src/generated

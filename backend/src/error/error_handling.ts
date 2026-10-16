@@ -63,6 +63,7 @@ const MISSION_STATUS: Record<
   { status: number; message: string }
 > = {
   NOT_FOUND: { status: 404, message: "Mission not found" },
+  NOT_FROM_AI: { status: 409, message: "Only current AI-generated quests can be saved" },
 };
 
 export function handleMissionError(

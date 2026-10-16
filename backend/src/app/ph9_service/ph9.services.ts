@@ -92,10 +92,12 @@ export class Ph9Service {
         const submission = await this.ph9Repo.findSubmission(userId, submissionId);
         if (!submission) throw new Ph9Error("SUBMISSION_NOT_FOUND");
 
-        const answers = submission.answers.map((a) => ({
-            questionIndex: a.question.questionIndex,
-            answerValue: a.answerValue,
-        }));
+        const answers: ScoredAnswer[] = submission.answers.map(
+            (a: { question: { questionIndex: number }; answerValue: number }): ScoredAnswer => ({
+                questionIndex: a.question.questionIndex,
+                answerValue: a.answerValue,
+            }),
+        );
         return {
             submissionId: submission.submissionId,
             submittedAt: submission.submittedAt,

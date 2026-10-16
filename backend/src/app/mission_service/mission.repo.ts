@@ -3,9 +3,10 @@ import type { PrismaClient, Quest } from "../../generated/prisma/client";
 import { MissionError } from "../../error/exception";
 import type { UpdateMissionInput } from "./mission.schema";
 
-const isNotFound = (error: unknown): boolean =>
-  error instanceof Prisma.PrismaClientKnownRequestError &&
-  error.code === "P2025";
+const isNotFound = (
+  error: unknown,
+): error is Prisma.PrismaClientKnownRequestError =>
+  error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025";
 
 export interface CreateQuestData {
   questTitle: string;
