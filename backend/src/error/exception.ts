@@ -48,3 +48,15 @@ export class MissionError extends Error {
     this.name = "MissionError";
   }
 }
+
+export type SuggestionErrorCode = "INVALID_INPUT" | "UNAUTHORIZED" | "PH9_REQUIRED" | "REFRESH_TOO_SOON";
+
+export class SuggestionError extends Error {
+  constructor(
+    public readonly code: SuggestionErrorCode,
+    public readonly retryAfterMs?: number,
+  ) {
+    super(code);
+    this.name = "SuggestionError";
+  }
+}

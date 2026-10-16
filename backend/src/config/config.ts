@@ -22,14 +22,14 @@ const EnvSchema = z
 
         DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
         DIRECT_URL: z.string().min(1, "DIRECT_URL is required"),
-        JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
 
-        ML_URL: z.url().default("http://localhost:8000"),
-        ML_TIMEOUT_MS: positiveInt.default(3000),
-        ML_SHARED_SECRET: z.string().min(1).optional(),
+        JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
+        GEMINI_API_KEY: z.string().min(1),
+        GEMINI_MODEL: z.string().min(1).default("gemini-2.5-flash"),
+        GEMINI_TIMEOUT_MS: positiveInt.default(10000),
     })
     .superRefine((env, ctx) => {
-        if (env.NODE_ENV === "production" && !env.ML_SHARED_SECRET) {
+        if (env.NODE_ENV === "production" && !env.GEMINI_API_KEY) {
             ctx.addIssue({
                 code: "custom",
                 path: ["ML_SHARED_SECRET"],
@@ -71,9 +71,9 @@ export const config = {
     Auth: {
         jwtSecret: env.JWT_SECRET,
     },
-    ML: {
-        url: env.ML_URL,
-        timeoutMs: env.ML_TIMEOUT_MS,
-        sharedSecret: env.ML_SHARED_SECRET,
+    AI: {
+        geminiApiKey: env.GEMINI_API_KEY,
+        model: env.GEMINI_MODEL,
+        timeoutMs: env.GEMINI_TIMEOUT_MS,
     },
 } as const;

@@ -19,6 +19,10 @@ import { Ph9Service } from "./app/ph9_service/ph9.services";
 import { Ph9Repository } from "./app/ph9_service/ph9.repo";
 import { ArticleService } from "./app/article_service/article.services";
 import { ArticleRepository } from "./app/article_service/article.repo";
+import { QuestSuggestionService } from "./app/ai_service/cache/suggestion.services";
+import { MemoryQuestSetCache } from "./app/ai_service/cache/suggestion.cache";
+import { AIService } from "./app/ai_service/ai.services";
+import { GeminiQuestGenerator } from "./app/ai_service/ai.provider";
 
 export function createApp(): Express {
 	const db = Prisma(config.Database.databaseUrl).setup();
@@ -45,6 +49,17 @@ export function createApp(): Express {
         new Ph9Repository(db)
     )
 
+	const generator = new GeminiQuestGenerator({
+		apiKey: config.AI.geminiApiKey,
+		model: config.AI.model,
+		timeoutMs: config.AI.timeoutMs
+	})
+	
+	const aiService = new AIService(generator, { warn: (message, meta) => console.warn(message, meta) })
+
+	const questCache = new MemoryQuestSetCache(24 * 60 * 60 * 1000, 5000); // 24 h, max 5000 users
+	const suggestionService = new QuestSuggestionService(ph9Service, aiService, questCache);
+
 	const app = express();
 	app.use(helmet());
 	app.use(cors({ origin: config.Server.frontendUrl }));
@@ -57,6 +72,7 @@ export function createApp(): Express {
 			checkinService,
             missionService,
             articleService,
+			suggestionService,
             ph9Service,
 			mainLimit: config.Server.mainLimit,
 			authLimit: config.Server.authLimit,
@@ -75,3 +91,4 @@ export function startApp(): HttpServer {
 
 	return server;
 }
+	

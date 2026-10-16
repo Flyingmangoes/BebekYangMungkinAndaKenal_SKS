@@ -21,6 +21,7 @@ model User {
   consentSrc         String   @map("consent_src")
   emailConsent       Boolean  @map("email_consent")
   phoneNumberConsent Boolean  @map("phone_number_consent")
+  privacyConset      Boolean  @map("privacy_consent")
   consentAt          DateTime @map("consent_at") @db.Timestamptz(6)
   createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt          DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -90,11 +91,12 @@ model ArticleBody {
 
 model Quest {
   questId          String   @id @default(uuid()) @map("quest_id") @db.Uuid
+  submissionId     String   @map("submission_id") @db.Uuid
   userId           String   @map("user_id") @db.Uuid
   questTitle       String   @map("quest_title")
   questDescription String   @map("quest_description")
   progress         Int      @default(0)
-  questVersion     Float    @default(1) @map("quest_version")
+  source           String   @default("manual")
   createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
@@ -166,20 +168,4 @@ model Ph9Answer {
   @@unique([submissionId, questionId])
   @@index([questionId])
   @@map("ph9_answers")
-}
-
-model GameModel {
-  gameId      String       @id @default(uuid()) @map("game_id") @db.Uuid
-  gameSession GameSession?
-
-  @@map("game_model")
-}
-
-model GameSession {
-  sessionId String @id @default(uuid()) @map("session_id") @db.Uuid
-  gameId    String @unique @map("game_id") @db.Uuid // was missing @db.Uuid, which breaks the FK
-
-  game GameModel @relation(fields: [gameId], references: [gameId], onDelete: Cascade)
-
-  @@map("game_session")
 }

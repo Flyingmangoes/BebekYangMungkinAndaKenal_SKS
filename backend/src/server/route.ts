@@ -15,6 +15,10 @@ import { ArticleService } from "../app/article_service/article.services";
 import { Ph9Service } from "../app/ph9_service/ph9.services";
 import { requireAuth } from "../middlewares/auth";
 import { validate } from "../middlewares/validate";
+import { SuggestionController } from "../app/ai_service/cache/suggestion.controllers";
+import { createSuggestionRouter } from "../app/ai_service/cache/suggestion.routes";
+import type { QuestSuggestionService } from "../app/ai_service/cache/suggestion.services";
+
 
 export interface RouteRequired {
     userService: UserService;
@@ -22,6 +26,7 @@ export interface RouteRequired {
     checkinService: CheckinService;
     missionService: MissionService;
     articleService: ArticleService;
+    suggestionService: QuestSuggestionService;
     ph9Service: Ph9Service;
     mainLimit: number;
     authLimit: number;
@@ -51,6 +56,15 @@ export function routeFactory(required: RouteRequired): Router {
             requireAuth,
             submitLimiter: authRateLimit.authRateLimit() as RequestHandler,
             validate,
+        }),
+    );
+    v1.use(
+        "/ai",
+        mainRateLimit.mainRateLimit() as RequestHandler,
+        createSuggestionRouter({
+            controller: SuggestionController(required.suggestionService),
+            requireAuth,
+            refreshLimiter: authRateLimit.authRateLimit() as RequestHandler,
         }),
     );
 
