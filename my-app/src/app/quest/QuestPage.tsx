@@ -4,7 +4,6 @@ import { LinkButton } from '@/components/ui/LinkButton'
 
 import { ENERGY_OPTIONS, getQuestsByEnergy, STEP_TRAIL } from '@/app/quest/questService'
 import type { EnergyLevel, QuestItem } from '@/app/quest/questService'
-import { Artwork } from '@/components/ui/Artwork'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Chip } from '@/components/ui/Chip'
