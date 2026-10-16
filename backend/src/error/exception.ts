@@ -40,7 +40,7 @@ export class Ph9Error extends Error {
   }
 }
 
-export type MissionErrorCode = "NOT_FOUND";
+export type MissionErrorCode = "NOT_FOUND" | "NOT_FROM_AI";
 
 export class MissionError extends Error {
   constructor(public readonly code: MissionErrorCode) {

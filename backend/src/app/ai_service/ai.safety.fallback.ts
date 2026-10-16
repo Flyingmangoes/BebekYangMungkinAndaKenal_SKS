@@ -171,3 +171,4 @@ export const pickFallbackSet = (input: GenerationInput): QuestsByEnergy => {
   }
   return set;
 };
+

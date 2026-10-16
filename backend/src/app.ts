@@ -19,10 +19,15 @@ import { Ph9Service } from "./app/ph9_service/ph9.services";
 import { Ph9Repository } from "./app/ph9_service/ph9.repo";
 import { ArticleService } from "./app/article_service/article.services";
 import { ArticleRepository } from "./app/article_service/article.repo";
-import { QuestSuggestionService } from "./app/ai_service/cache/suggestion.services";
-import { MemoryQuestSetCache } from "./app/ai_service/cache/suggestion.cache";
+import { QuestSuggestionService } from "./app/ai_service/suggestion/suggestion.services";
+import { MemoryQuestSetCache } from "./app/ai_service/suggestion/suggestion.cache";
 import { AIService } from "./app/ai_service/ai.services";
 import { GeminiQuestGenerator } from "./app/ai_service/ai.provider";
+import type { GeminiOptions } from "./app/ai_service/ai.provider";
+import { GeminiInsightGenerator } from "./app/ai_service/ai.insight.provider";
+import { InsightAIService } from "./app/ai_service/ai.insight.services";
+import { InsightService } from "./app/ai_service/insight/insight.services";
+import { MemoryInsightCache } from "./app/ai_service/insight/insight.cache";
 
 export function createApp(): Express {
 	const db = Prisma(config.Database.databaseUrl).setup();
@@ -37,28 +42,25 @@ export function createApp(): Express {
 		new StreakRepository(db),
 	);
 
-    const missionService = new MissionService(
-        new MissionRepository(db)
-    )
+	const articleService = new ArticleService(new ArticleRepository(db));
+	const ph9Service = new Ph9Service(new Ph9Repository(db));
 
-    const articleService = new ArticleService(
-        new ArticleRepository(db)
-    )
-
-    const ph9Service = new Ph9Service(
-        new Ph9Repository(db)
-    )
-
-	const generator = new GeminiQuestGenerator({
+	const geminiOptions: GeminiOptions = {
 		apiKey: config.AI.geminiApiKey,
 		model: config.AI.model,
-		timeoutMs: config.AI.timeoutMs
-	})
-	
-	const aiService = new AIService(generator, { warn: (message, meta) => console.warn(message, meta) })
+		timeoutMs: config.AI.timeoutMs,
+	};
+	const aiLogger = { warn: (message: string, meta?: Record<string, unknown>) => console.warn(message, meta) };
 
 	const questCache = new MemoryQuestSetCache(24 * 60 * 60 * 1000, 5000); // 24 h, max 5000 users
+	const aiService = new AIService(new GeminiQuestGenerator(geminiOptions), aiLogger);
 	const suggestionService = new QuestSuggestionService(ph9Service, aiService, questCache);
+
+	const insightCache = new MemoryInsightCache(24 * 60 * 60 * 1000, 5000); // 24 h, max 5000 users
+	const insightAIService = new InsightAIService(new GeminiInsightGenerator(geminiOptions), aiLogger);
+	const insightService = new InsightService(ph9Service, insightAIService, insightCache);
+
+	const missionService = new MissionService(new MissionRepository(db), questCache);
 
 	const app = express();
 	app.use(helmet());
@@ -70,10 +72,11 @@ export function createApp(): Express {
 			authService,
 			userService,
 			checkinService,
-            missionService,
-            articleService,
+			missionService,
+			articleService,
 			suggestionService,
-            ph9Service,
+			insightService,
+			ph9Service,
 			mainLimit: config.Server.mainLimit,
 			authLimit: config.Server.authLimit,
 			windowMinute: config.Server.windowMinute,
@@ -91,4 +94,3 @@ export function startApp(): HttpServer {
 
 	return server;
 }
-	

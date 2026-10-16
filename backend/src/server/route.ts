@@ -15,9 +15,12 @@ import { ArticleService } from "../app/article_service/article.services";
 import { Ph9Service } from "../app/ph9_service/ph9.services";
 import { requireAuth } from "../middlewares/auth";
 import { validate } from "../middlewares/validate";
-import { SuggestionController } from "../app/ai_service/cache/suggestion.controllers";
-import { createSuggestionRouter } from "../app/ai_service/cache/suggestion.routes";
-import type { QuestSuggestionService } from "../app/ai_service/cache/suggestion.services";
+import { SuggestionController } from "../app/ai_service/suggestion/suggestion.controllers";
+import { createSuggestionRouter } from "../app/ai_service/suggestion/suggestion.routes";
+import type { QuestSuggestionService } from "../app/ai_service/suggestion/suggestion.services";
+import { InsightController } from "../app/ai_service/insight/insight.controllers";
+import { createInsightRouter } from "../app/ai_service/insight/insight.routes";
+import type { InsightService } from "../app/ai_service/insight/insight.services";
 
 
 export interface RouteRequired {
@@ -27,6 +30,7 @@ export interface RouteRequired {
     missionService: MissionService;
     articleService: ArticleService;
     suggestionService: QuestSuggestionService;
+    insightService: InsightService;
     ph9Service: Ph9Service;
     mainLimit: number;
     authLimit: number;
@@ -43,6 +47,23 @@ export function routeFactory(required: RouteRequired): Router {
     const authRateLimit = RLFactory(required.windowMinute, required.authLimit);
     const mainRateLimit = RLFactory(required.windowMinute, required.mainLimit);
 
+    // One router for all Gemini endpoints: mainRateLimit counts each request once.
+    const aiRoute = Router();
+    aiRoute.use(
+        createSuggestionRouter({
+            controller: SuggestionController(required.suggestionService),
+            requireAuth,
+            refreshLimiter: authRateLimit.authRateLimit() as RequestHandler,
+        }),
+    );
+    aiRoute.use(
+        createInsightRouter({
+            controller: InsightController(required.insightService),
+            requireAuth,
+            insightLimiter: authRateLimit.authRateLimit() as RequestHandler,
+        }),
+    );
+
     v1.use("/auth", authRateLimit.authRateLimit() as RequestHandler, authRoute);
     v1.use("/user", mainRateLimit.mainRateLimit() as RequestHandler, userRoute);
     v1.use("/checkin", mainRateLimit.mainRateLimit() as RequestHandler, checkinRoute);
@@ -58,15 +79,7 @@ export function routeFactory(required: RouteRequired): Router {
             validate,
         }),
     );
-    v1.use(
-        "/ai",
-        mainRateLimit.mainRateLimit() as RequestHandler,
-        createSuggestionRouter({
-            controller: SuggestionController(required.suggestionService),
-            requireAuth,
-            refreshLimiter: authRateLimit.authRateLimit() as RequestHandler,
-        }),
-    );
+    v1.use("/ai", mainRateLimit.mainRateLimit() as RequestHandler, aiRoute);
 
     const router = Router();
     router.use("/v1", v1);
