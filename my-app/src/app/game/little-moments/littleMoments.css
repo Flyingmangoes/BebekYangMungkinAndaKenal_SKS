@@ -1,0 +1,196 @@
+/* Scoped styles for the Little Moments board. Everything is prefixed with .lm- */
+
+.lm-root {
+  --lm-cream: #fbf4e6;
+  --lm-sage: #8fae86;
+  --lm-lavender: #8c7bb5;
+  --lm-ink: #3e3a36;
+}
+
+/* ---- Board ---- */
+.lm-board {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: var(--lm-cream);
+  box-shadow: 0 10px 30px rgba(62, 58, 54, 0.12), inset 0 0 0 1px rgba(62, 58, 54, 0.06);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.lm-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ---- Slots (drop targets / hints) ---- */
+.lm-slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 2px dashed transparent;
+  border-radius: 14px;
+  pointer-events: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.lm-slot__label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 3px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #3e3a36;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  opacity: 0;
+  z-index: 4;
+}
+.lm-slot--hint {
+  border-color: rgba(140, 123, 181, 0.75);
+  background-color: rgba(201, 190, 221, 0.2);
+}
+.lm-slot--hint .lm-slot__label {
+  opacity: 1;
+}
+.lm-slot--over {
+  border-color: #55734f;
+  background-color: rgba(143, 174, 134, 0.3);
+}
+
+/* ---- Tokens (draggable objects) ---- */
+.lm-token {
+  position: absolute;
+  z-index: 10;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: grab;
+  touch-action: none; /* lets touch drag the object instead of scrolling the page */
+  -webkit-tap-highlight-color: transparent;
+  transition: left 0.32s ease, top 0.32s ease, transform 0.32s ease;
+  filter: drop-shadow(0 3px 4px rgba(62, 58, 54, 0.2));
+}
+.lm-token:focus-visible {
+  outline: 3px solid #6b5b95;
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+.lm-token__art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+.lm-token--dragging {
+  z-index: 30;
+  cursor: grabbing;
+  transition: none;
+}
+.lm-token--dragging .lm-token__art {
+  transform: scale(1.1) rotate(-3deg);
+}
+.lm-token--selected {
+  z-index: 20;
+}
+.lm-token--selected::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 3px solid #8c7bb5;
+  border-radius: 16px;
+  background: rgba(201, 190, 221, 0.22);
+}
+.lm-token--selected .lm-token__art {
+  transform: translateY(-4px) scale(1.06);
+}
+.lm-token--placed::after {
+  content: '✓';
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #55734f;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  animation: lm-pop 0.3s ease both;
+}
+.lm-token--locked {
+  cursor: default;
+}
+
+/* ---- Completion ---- */
+.lm-board--solved .lm-token__art {
+  animation: lm-bloom 0.9s ease both;
+  animation-delay: calc(var(--i, 0) * 0.09s);
+}
+.lm-sparkles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 40;
+}
+.lm-sparkle {
+  position: absolute;
+  bottom: -12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, #f4c9ae 60%, rgba(244, 201, 174, 0) 100%);
+  opacity: 0;
+  animation: lm-float 2.6s ease-out both;
+}
+.lm-complete-in {
+  animation: lm-rise 0.5s ease both;
+}
+
+@keyframes lm-bloom {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.12) rotate(-2deg); }
+  100% { transform: scale(1); }
+}
+@keyframes lm-float {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  20% { opacity: 0.95; }
+  100% { transform: translateY(-340px) scale(1.1); opacity: 0; }
+}
+@keyframes lm-pop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+@keyframes lm-rise {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Reduced motion: no movement, instant state changes ---- */
+@media (prefers-reduced-motion: reduce) {
+  .lm-token,
+  .lm-token__art,
+  .lm-slot {
+    transition: none;
+  }
+  .lm-board--solved .lm-token__art,
+  .lm-sparkle,
+  .lm-token--placed::after,
+  .lm-complete-in {
+    animation: none;
+  }
+  .lm-sparkles {
+    display: none;
+  }
+}

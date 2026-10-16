@@ -1,0 +1,117 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Newsreader', ui-serif, Georgia, serif;
+
+  /* Surface (krem hangat) */
+  --color-cream-50: #fbf9f4;
+  --color-cream-100: #f7f3ec;
+  --color-cream-200: #f1ece2;
+  --color-cream-300: #e6dfd1;
+
+  /* Brand (hijau Pelan) */
+  --color-pelan-50: #eef5f0;
+  --color-pelan-100: #e3ece6;
+  --color-pelan-200: #c9ddd0;
+  --color-pelan-300: #a4c6b1;
+  --color-pelan-400: #6fa285;
+  --color-pelan-500: #4a8263;
+  --color-pelan-600: #2f5d4a;
+  --color-pelan-700: #264b3c;
+  --color-pelan-800: #1f3c31;
+
+  /* Teks */
+  --color-ink-900: #2b2a26;
+  --color-ink-700: #4a4842;
+  --color-ink-500: #77746b;
+  --color-ink-400: #a19e94;
+
+  /* Aksen hangat */
+  --color-sand-100: #fbeedd;
+  --color-sand-500: #d98a4e;
+  --color-clay-100: #f8e7e0;
+  --color-clay-200: #efcdbf;
+  --color-clay-500: #b4583a;
+  --color-clay-600: #9a4a30;
+
+  /* Guest explore page tokens */
+  --color-surface: #f7f3ec;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #fbf9f4;
+  --color-surface-container: #f1ece2;
+  --color-surface-container-high: #e6dfd1;
+  --color-surface-container-highest: #ded6c8;
+  --color-on-surface: #2b2a26;
+  --color-on-surface-variant: #77746b;
+  --color-on-primary: #ffffff;
+  --color-on-primary-fixed: #002112;
+  --color-on-primary-container: #eef5f0;
+  --color-on-tertiary-fixed: #4a3b00;
+  --color-primary: #2f5d4a;
+  --color-primary-container: #4a8263;
+  --color-primary-fixed: #e3ece6;
+  --color-secondary: #b4583a;
+  --color-secondary-fixed: #f8e7e0;
+  --color-on-secondary-fixed: #9a4a30;
+  --color-tertiary: #d98a4e;
+  --color-tertiary-fixed: #fbeedd;
+  --color-outline: #a19e94;
+  --color-outline-variant: #d8d0c3;
+
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2rem;
+  --spacing-gutter-sm: 0.75rem;
+  --spacing-margin: 1.25rem;
+
+  --font-label-sm: 600 11px/14px 'Plus Jakarta Sans', sans-serif;
+  --font-label-md: 700 12px/16px 'Plus Jakarta Sans', sans-serif;
+  --font-label-lg: 700 14px/20px 'Plus Jakarta Sans', sans-serif;
+  --font-body-sm: 400 12px/18px 'Plus Jakarta Sans', sans-serif;
+  --font-body-md: 400 14px/22px 'Plus Jakarta Sans', sans-serif;
+  --font-headline-sm: 500 18px/24px 'Newsreader', Georgia, serif;
+  --font-headline-md: 500 20px/28px 'Newsreader', Georgia, serif;
+  --font-headline-xl-mobile: 500 32px/36px 'Newsreader', Georgia, serif;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-cream-100);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
