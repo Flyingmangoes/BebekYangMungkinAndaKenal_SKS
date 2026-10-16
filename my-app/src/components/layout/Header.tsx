@@ -4,7 +4,6 @@ import { formatDateId, getGreeting } from '@/lib/dateGreeting'
 
 export interface HeaderProps {
   userName: string
-  energyLabel: string
   moodLabel: string
   locationLabel: string
   temperatureLabel: string
@@ -15,7 +14,6 @@ export interface HeaderProps {
 
 export function Header({
   userName,
-  energyLabel,
   moodLabel,
   locationLabel,
   temperatureLabel,
@@ -37,16 +35,12 @@ export function Header({
             ·
           </span>
           <p className="truncate font-serif text-sm italic text-ink-500">
-            {getGreeting(now)}, {userName}
+            {getGreeting(now)}
+            {userName ? `, ${userName}` : ''}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-2 rounded-full bg-cream-200 px-3.5 py-1.5 text-xs font-semibold text-ink-700">
-            <span aria-hidden="true" className="h-2 w-2 rounded-full bg-pelan-600" />
-            Energi: {energyLabel}
-          </span>
-
           <button
             type="button"
             onClick={onBreathClick}
@@ -55,7 +49,6 @@ export function Header({
             <Wind size={14} aria-hidden="true" />
             Tarik Napas Sejenak
           </button>
-
           <button
             type="button"
             onClick={onCompanionClick}
@@ -65,12 +58,14 @@ export function Header({
             <MessageCircleHeart size={18} aria-hidden="true" />
           </button>
 
-          <span
-            aria-label={`Akun ${userName}`}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-sand-100 text-sm font-semibold text-sand-500 ring-2 ring-cream-50"
-          >
-            {initial}
-          </span>
+          {userName && (
+            <span
+              aria-label={`Akun ${userName}`}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-sand-100 text-sm font-semibold text-sand-500 ring-2 ring-cream-50"
+            >
+              {initial}
+            </span>
+          )}
         </div>
       </div>
 
@@ -92,12 +87,14 @@ export function Header({
           </div>
         </div>
 
-        <span
-          aria-label={`Akun ${userName}`}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-sand-100 text-sm font-semibold text-sand-500 ring-2 ring-pelan-200"
-        >
-          {initial}
-        </span>
+        {userName && (
+          <span
+            aria-label={`Akun ${userName}`}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-sand-100 text-sm font-semibold text-sand-500 ring-2 ring-pelan-200"
+          >
+            {initial}
+          </span>
+        )}
       </div>
     </header>
   )

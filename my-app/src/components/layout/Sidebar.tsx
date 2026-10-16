@@ -7,17 +7,19 @@ export interface SidebarProps {
   activePath: string
   onNavigate: (path: string) => void
   userFullName: string
-  userModeLabel: string
-  weekRhythmLabel: string
+  isAuthenticated: boolean
 }
 
 export function Sidebar({
   activePath,
   onNavigate,
   userFullName,
-  userModeLabel,
-  weekRhythmLabel,
+  isAuthenticated,
 }: SidebarProps) {
+  const visibleNavItems = isAuthenticated
+    ? NAV_ITEMS
+    : NAV_ITEMS.filter((item) => !['quest', 'refleksi', 'insight', 'profil'].includes(item.id))
+
   return (
     <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-cream-300 bg-cream-100 px-4 py-6 lg:flex">
       <div className="mb-8 flex items-center gap-3 px-2">
@@ -35,7 +37,7 @@ export function Sidebar({
       </div>
 
       <nav aria-label="Navigasi utama" className="flex flex-col gap-1">
-        {NAV_ITEMS.map((item) => {
+        {visibleNavItems.map((item) => {
           const Icon = item.icon
           const isActive = item.path === activePath
 
@@ -63,16 +65,6 @@ export function Sidebar({
       </nav>
 
       <div className="mt-auto flex flex-col gap-3">
-        <div className="flex items-center justify-between gap-2 rounded-xl bg-white/70 px-3 py-2 text-[11px] ring-1 ring-cream-300/70">
-          <span className="font-medium uppercase tracking-wider text-ink-500">
-            Ritme pekan ini
-          </span>
-          <span className="flex items-center gap-1.5 font-semibold text-ink-900">
-            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-pelan-500" />
-            {weekRhythmLabel}
-          </span>
-        </div>
-
         <a
           href="/bantuan"
           onClick={(event) => {
@@ -90,25 +82,26 @@ export function Sidebar({
           </span>
         </a>
 
-        <button
-          type="button"
-          onClick={() => {
-            onNavigate('/profil')
-          }}
-          className="flex items-center gap-3 rounded-xl bg-white/70 px-3 py-2.5 text-left ring-1 ring-cream-300/70 transition-colors hover:bg-white"
-        >
-          <span
-            aria-hidden="true"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-sand-100 text-xs font-semibold text-sand-500"
+        {isAuthenticated && (
+          <button
+            type="button"
+            onClick={() => {
+              onNavigate('/profil')
+            }}
+            className="flex items-center gap-3 rounded-xl bg-white/70 px-3 py-2.5 text-left ring-1 ring-cream-300/70 transition-colors hover:bg-white"
           >
-            {userFullName.charAt(0).toUpperCase()}
-          </span>
-          <span className="flex min-w-0 flex-1 flex-col">
-            <span className="truncate text-xs font-semibold text-ink-900">{userFullName}</span>
-            <span className="truncate text-[10px] text-ink-500">{userModeLabel}</span>
-          </span>
-          <SlidersHorizontal size={14} className="text-ink-400" aria-hidden="true" />
-        </button>
+            <span
+              aria-hidden="true"
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-sand-100 text-xs font-semibold text-sand-500"
+            >
+              {userFullName.charAt(0).toUpperCase()}
+            </span>
+            <span className="flex min-w-0 flex-1 flex-col">
+              <span className="truncate text-xs font-semibold text-ink-900">{userFullName}</span>
+            </span>
+            <SlidersHorizontal size={14} className="text-ink-400" aria-hidden="true" />
+          </button>
+        )}
       </div>
     </aside>
   )

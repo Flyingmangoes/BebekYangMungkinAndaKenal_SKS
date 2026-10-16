@@ -8,17 +8,14 @@ import {
   ExternalLink,
   FileText,
   LifeBuoy,
-  Pause,
-  Play,
   Share2,
   ShieldCheck,
-  Volume2,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 import {
   ALL_TOPICS,
-  AUDIO_MEDITATION,
   EKSPLORASI_HEADER,
   FEATURED_ARTICLE,
   filterArticles,
@@ -26,6 +23,7 @@ import {
   TOPICS,
   TOTAL_NOTES,
 } from '@/app/eksplorasi/eksplorasiService'
+import type { Article } from '@/app/eksplorasi/eksplorasiService'
 import { Artwork } from '@/components/ui/Artwork'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -35,12 +33,23 @@ import { LinkButton } from '@/components/ui/LinkButton'
 import { SectionHeader } from '@/components/ui/SectionHeader'
 
 export function EksplorasiPage() {
+  const navigate = useNavigate()
   const [activeTopic, setActiveTopic] = useState<string>(ALL_TOPICS)
   const [savedIds, setSavedIds] = useState<readonly string[]>([])
-  const [isPlaying, setIsPlaying] = useState(false)
+  const [loadedArticles, setLoadedArticles] = useState<readonly Article[]>()
 
   const articles = filterArticles(activeTopic)
   const isFeaturedVisible = activeTopic === ALL_TOPICS || activeTopic === FEATURED_ARTICLE.topic
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setLoadedArticles(filterArticles(activeTopic))
+    })
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+    }
+  }, [activeTopic])
 
   function toggleSaved(id: string) {
     setSavedIds((previous) =>
@@ -91,7 +100,14 @@ export function EksplorasiPage() {
 
       {/* Unggulan */}
       {isFeaturedVisible ? (
-        <Card as="article" className="grid gap-6 md:grid-cols-[1fr_1.3fr] md:items-center lg:p-8">
+        <Card
+          as="article"
+          className="grid cursor-pointer gap-6 transition-shadow hover:shadow-md md:grid-cols-[1fr_1.3fr] md:items-center lg:p-8"
+          onClick={(event) => {
+            if (event.target instanceof Element && event.target.closest('button')) return
+            void navigate('/topic/detail')
+          }}
+        >
           <Artwork variant="window" className="min-h-56 md:min-h-72">
             <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-ink-900">
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-clay-500" />
@@ -164,17 +180,38 @@ export function EksplorasiPage() {
           </p>
         </div>
 
-        {articles.length === 0 ? (
+        {!loadedArticles ? (
+          <div className="grid gap-5 md:grid-cols-2" aria-busy="true">
+            {Array.from({ length: 4 }, (_, index) => (
+              <Card key={index} className="flex flex-col gap-3 p-3 lg:p-3">
+                <div className="h-44 animate-pulse rounded-xl bg-cream-200" />
+                <div className="flex flex-col gap-2 px-2 pb-2">
+                  <div className="h-3 w-1/3 animate-pulse rounded bg-cream-200" />
+                  <div className="h-6 w-4/5 animate-pulse rounded bg-cream-200" />
+                  <div className="h-10 w-full animate-pulse rounded bg-cream-200" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : loadedArticles.length === 0 ? (
           <Card tone="muted" className="text-center text-sm text-ink-500">
             Belum ada esai untuk topik ini. Coba topik lain, atau kembali lagi nanti.
           </Card>
         ) : (
           <div className="grid gap-5 md:grid-cols-2">
-            {articles.map((article) => {
+            {loadedArticles.map((article) => {
               const isSaved = savedIds.includes(article.id)
 
               return (
-                <Card key={article.id} as="article" className="flex flex-col gap-3 p-3 lg:p-3">
+                <Card
+                  key={article.id}
+                  as="article"
+                  className="flex cursor-pointer flex-col gap-3 p-3 transition-shadow hover:shadow-md lg:p-3"
+                  onClick={(event) => {
+                    if (event.target instanceof Element && event.target.closest('button')) return
+                    void navigate('/topic/detail')
+                  }}
+                >
                   <Artwork variant={article.artwork} className="min-h-44">
                     <span className="absolute top-3 left-3 rounded-md bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-ink-900">
                       {article.topic}
@@ -223,30 +260,6 @@ export function EksplorasiPage() {
           </div>
         )}
       </section>
-
-      {/* Audio */}
-      <Card tone="muted" className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-pelan-700 text-white">
-            <Volume2 size={18} aria-hidden="true" />
-          </span>
-          <div className="flex flex-col gap-0.5">
-            <Eyebrow>{AUDIO_MEDITATION.label}</Eyebrow>
-            <p className="font-serif text-lg font-medium text-ink-900">{AUDIO_MEDITATION.title}</p>
-            <p className="text-xs text-ink-500">{AUDIO_MEDITATION.description}</p>
-          </div>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          icon={isPlaying ? Pause : Play}
-          onClick={() => {
-            setIsPlaying((previous) => !previous)
-          }}
-        >
-          {isPlaying ? 'Jeda Audio' : 'Putar Audio'}
-        </Button>
-      </Card>
 
       {/* Ruang aman */}
       <Card tone="blush" className="flex flex-wrap items-center justify-between gap-4">

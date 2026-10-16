@@ -9,7 +9,7 @@ import {
   RefreshCw,
   Zap,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { getBerandaContent } from '@/app/beranda/berandaService'
@@ -31,6 +31,17 @@ export function BerandaPage() {
   const [selectedMood, setSelectedMood] = useState<MoodId | null>('baik')
   const [isQuestSnoozed, setIsQuestSnoozed] = useState(false)
   const [isReadingSaved, setIsReadingSaved] = useState(false)
+  const [isQuestLoading, setIsQuestLoading] = useState(true)
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setIsQuestLoading(false)
+    })
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+    }
+  }, [])
 
   return (
     <div className="flex flex-col gap-8">
@@ -44,7 +55,7 @@ export function BerandaPage() {
           <h1 className="font-serif text-3xl font-medium leading-tight text-ink-900 lg:text-4xl">
             {content.heroTitle}
           </h1>
-          <p className="max-w-lg text-sm leading-relaxed text-ink-500 lg:text-[15px]">
+          <p className="max-w-lg text-sm leading-relaxed text-ink-900 lg:text-[15px]">
             {content.heroDescription}
           </p>
         </div>
@@ -127,6 +138,17 @@ export function BerandaPage() {
 
       {/* Quest + Pola */}
       <section className="grid items-start gap-5 lg:grid-cols-[1.75fr_1fr]">
+        {isQuestLoading ? (
+          <Card className="flex flex-col gap-5 lg:p-8" aria-busy="true">
+            <div className="h-6 w-48 animate-pulse rounded-full bg-cream-200" />
+            <div className="h-9 w-3/4 animate-pulse rounded-lg bg-cream-200" />
+            <div className="h-16 w-full animate-pulse rounded-xl bg-cream-200" />
+            <div className="flex gap-3">
+              <div className="h-10 w-32 animate-pulse rounded-full bg-cream-200" />
+              <div className="h-10 w-24 animate-pulse rounded-full bg-cream-200" />
+            </div>
+          </Card>
+        ) : (
         <Card className="flex flex-col gap-5 lg:p-8">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -169,6 +191,7 @@ export function BerandaPage() {
               : content.quest.note}
           </p>
         </Card>
+        )}
 
         <Card tone="muted" as="aside" className="flex flex-col gap-4">
           <div className="flex items-center justify-between gap-2">

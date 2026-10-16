@@ -1,9 +1,9 @@
-import { ArrowRight, Check, CheckCheck, Heart, Quote, RefreshCw, SkipForward, Timer, Waves } from 'lucide-react'
-import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Check, CheckCheck, Heart, Quote, RefreshCw, SkipForward, Timer, Waves } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { LinkButton } from '@/components/ui/LinkButton'
 
-import { ENERGY_OPTIONS, getQuestsByEnergy, PSYCH_NOTE, STEP_TRAIL } from '@/app/quest/questService'
-import type { EnergyLevel } from '@/app/quest/questService'
+import { ENERGY_OPTIONS, getQuestsByEnergy, STEP_TRAIL } from '@/app/quest/questService'
+import type { EnergyLevel, QuestItem } from '@/app/quest/questService'
 import { Artwork } from '@/components/ui/Artwork'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -18,19 +18,31 @@ export function QuestPage() {
   const [questIndex, setQuestIndex] = useState(0)
   const [isDone, setIsDone] = useState(false)
   const [isSkipped, setIsSkipped] = useState(false)
-
   const quests = useMemo(() => getQuestsByEnergy(energy), [energy])
   const quest = quests[questIndex % Math.max(quests.length, 1)]
+  const [loadedQuest, setLoadedQuest] = useState<QuestItem | null>()
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setLoadedQuest(quest ?? null)
+    })
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+    }
+  }, [quest])
 
   function handleSelectEnergy(next: EnergyLevel) {
     setEnergy(next)
     setQuestIndex(0)
+    setLoadedQuest(undefined)
     setIsDone(false)
     setIsSkipped(false)
   }
 
   function handleSwapQuest() {
     setQuestIndex((previous) => previous + 1)
+    setLoadedQuest(undefined)
     setIsDone(false)
     setIsSkipped(false)
   }
@@ -91,24 +103,31 @@ export function QuestPage() {
 
       {/* Quest utama + samping */}
       <section className="grid items-start gap-5 lg:grid-cols-[1.9fr_1fr]">
-        {quest ? (
+        {loadedQuest === undefined ? (
+          <Card className="flex flex-col gap-5" aria-busy="true">
+            <div className="h-6 w-40 animate-pulse rounded-full bg-cream-200" />
+            <div className="h-9 w-3/4 animate-pulse rounded-lg bg-cream-200" />
+            <div className="h-20 w-full animate-pulse rounded-xl bg-cream-200" />
+            <div className="h-48 w-full animate-pulse rounded-2xl bg-cream-200" />
+          </Card>
+        ) : loadedQuest ? (
           <Card as="article" className="flex flex-col gap-5 lg:p-8">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex flex-wrap items-center gap-2">
-                <Chip tone="clay">{quest.tag}</Chip>
+                <Chip tone="clay">{loadedQuest.tag}</Chip>
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-500">
-                  {quest.category}
+                  {loadedQuest.category}
                 </span>
               </div>
               <Chip tone="outline" icon={Timer}>
-                {quest.minutesLabel}
+                {loadedQuest.minutesLabel}
               </Chip>
             </div>
 
             <h2 className="font-serif text-2xl font-medium leading-snug text-ink-900 lg:text-3xl">
-              {quest.title}
+              {loadedQuest.title}
             </h2>
-            <p className="text-sm leading-relaxed text-ink-500 lg:text-[15px]">{quest.body}</p>
+            <p className="text-sm leading-relaxed text-ink-500 lg:text-[15px]">{loadedQuest.body}</p>
 
             <Artwork variant="cup" className="min-h-48 items-end justify-between p-4">
               <div className="flex w-full items-end justify-between gap-3 text-white">
@@ -118,14 +137,14 @@ export function QuestPage() {
                   </span>
                   <div className="flex flex-col">
                     <span className="text-[10px] font-semibold uppercase tracking-wider text-white/80">
-                      {quest.timerLabel}
+                      {loadedQuest.timerLabel}
                     </span>
-                    <span className="font-serif text-xl font-medium">{quest.estimatedTime}</span>
+                    <span className="font-serif text-xl font-medium">{loadedQuest.estimatedTime}</span>
                   </div>
                 </div>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1.5 text-xs font-semibold backdrop-blur">
                   <Waves size={13} aria-hidden="true" />
-                  {quest.soundLabel}
+                  {loadedQuest.soundLabel}
                 </span>
               </div>
             </Artwork>
@@ -133,18 +152,18 @@ export function QuestPage() {
             <dl className="grid gap-3 rounded-xl bg-cream-200/60 p-4 text-xs sm:grid-cols-3">
               <div className="flex flex-col gap-1">
                 <dt className="text-ink-500">Perkiraan Waktu</dt>
-                <dd className="font-semibold text-ink-900">{quest.estimatedTime}</dd>
+                <dd className="font-semibold text-ink-900">{loadedQuest.estimatedTime}</dd>
               </div>
               <div className="flex flex-col gap-1">
                 <dt className="text-ink-500">Tingkat Tekanan</dt>
                 <dd className="flex items-center gap-1.5 font-semibold text-ink-900">
                   <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-pelan-500" />
-                  {quest.pressureLabel}
+                  {loadedQuest.pressureLabel}
                 </dd>
               </div>
               <div className="flex flex-col gap-1">
                 <dt className="text-ink-500">Kategori Utama</dt>
-                <dd className="font-semibold text-ink-900">{quest.mainCategory}</dd>
+                <dd className="font-semibold text-ink-900">{loadedQuest.mainCategory}</dd>
               </div>
             </dl>
 
@@ -183,7 +202,11 @@ export function QuestPage() {
                   : ''}
             </p>
           </Card>
-        ) : null}
+        ) : (
+          <Card tone="muted" className="text-sm text-ink-500">
+            Quest belum tersedia untuk energi ini. Coba pilih tingkat energi lain.
+          </Card>
+        )}
 
         <div className="flex flex-col gap-4">
           <Card tone="default" as="aside" className="flex flex-col gap-3">
@@ -241,29 +264,18 @@ export function QuestPage() {
         </div>
       </section>
 
-      {/* Catatan */}
-      <Card as="article" className="grid gap-5 md:grid-cols-[240px_1fr] md:items-center">
-        <Artwork variant="journal" className="min-h-36" />
-        <div className="flex flex-col gap-2">
-          <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wider">
-            <span className="text-clay-500">{PSYCH_NOTE.tag}</span>
-            <span aria-hidden="true" className="text-ink-400">
-              •
-            </span>
-            <span className="font-medium normal-case text-ink-500">{PSYCH_NOTE.readingTime}</span>
+      <Card as="section" tone="mint" className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-1">
+          <h2 className="font-serif text-xl font-medium text-ink-900">
+            Mau main game santai sejenak?
+          </h2>
+          <p className="text-sm leading-relaxed text-ink-500">
+            Luangkan waktu sebentar untuk bermain dan menyegarkan pikiran.
           </p>
-          <h3 className="font-serif text-xl font-medium leading-snug text-ink-900">
-            {PSYCH_NOTE.title}
-          </h3>
-          <p className="text-sm leading-relaxed text-ink-500">{PSYCH_NOTE.excerpt}</p>
-          <Link
-            to="/eksplorasi"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-900 hover:text-pelan-700"
-          >
-            Baca catatan selengkapnya
-            <ArrowRight size={12} aria-hidden="true" />
-          </Link>
         </div>
+        <LinkButton to="/game/little-moments" variant="secondary" icon={Heart}>
+          Main Sekarang
+        </LinkButton>
       </Card>
     </div>
   )

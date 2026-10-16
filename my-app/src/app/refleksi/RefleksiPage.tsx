@@ -1,6 +1,4 @@
 import {
-  ArrowRight,
-  Compass,
   Hand,
   Lock,
   MessageCircleHeart,
@@ -13,7 +11,6 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent } from "react";
-import { Link } from "react-router-dom";
 
 import {
   buildCompanionReply,
@@ -21,18 +18,14 @@ import {
   INITIAL_MESSAGES,
   QUICK_JOURNAL_TILES,
   QUICK_REPLIES,
-  SLOW_ESSAY,
 } from "@/app/refleksi/refleksiService";
 import type { ChatMessage } from "@/app/refleksi/refleksiService";
-import { Artwork } from "@/components/ui/Artwork";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { LinkButton } from "@/components/ui/LinkButton";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { cn } from "@/lib/cn";
-
-type ReflectionMode = "companion" | "mandiri";
 
 function currentTimeLabel(): string {
   const now = new Date();
@@ -43,13 +36,13 @@ function currentTimeLabel(): string {
 }
 
 export function RefleksiPage() {
-  const [mode, setMode] = useState<ReflectionMode>("companion");
   const [messages, setMessages] =
     useState<readonly ChatMessage[]>(INITIAL_MESSAGES);
   const [draft, setDraft] = useState("");
   const [isReplying, setIsReplying] = useState(false);
   const replyTimeoutRef = useRef<number | undefined>(undefined);
   const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
+  const messageIdRef = useRef(0);
 
   useEffect(() => {
     return () => {
@@ -68,8 +61,9 @@ export function RefleksiPage() {
       return;
     }
 
+    messageIdRef.current += 1;
     const userMessage: ChatMessage = {
-      id: `u-${Date.now()}`,
+      id: `u-${messageIdRef.current}`,
       author: "user",
       text: trimmed,
       timeLabel: currentTimeLabel(),
@@ -78,15 +72,12 @@ export function RefleksiPage() {
     setMessages((previous) => [...previous, userMessage]);
     setDraft("");
 
-    if (mode === "mandiri") {
-      return;
-    }
-
     setIsReplying(true);
     window.clearTimeout(replyTimeoutRef.current);
     replyTimeoutRef.current = window.setTimeout(() => {
+      messageIdRef.current += 1;
       const reply: ChatMessage = {
-        id: `c-${Date.now()}`,
+        id: `c-${messageIdRef.current}`,
         author: "companion",
         text: buildCompanionReply(trimmed),
         timeLabel: currentTimeLabel(),
@@ -100,59 +91,12 @@ export function RefleksiPage() {
     setDraft(event.target.value);
   }
 
-  const visibleMessages =
-    mode === "mandiri"
-      ? messages.filter((message) => message.author === "user")
-      : messages;
-
   return (
     <div className="flex flex-col gap-6">
       <SectionHeader
         level="h1"
         eyebrow="Ruang dialog hati"
         title="Refleksi Hari Ini"
-        action={
-          <div
-            role="tablist"
-            aria-label="Mode refleksi"
-            className="flex gap-1 rounded-xl bg-cream-200/70 p-1"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === "mandiri"}
-              onClick={() => {
-                setMode("mandiri");
-              }}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-colors",
-                mode === "mandiri"
-                  ? "bg-white text-ink-900 shadow-sm"
-                  : "text-ink-500 hover:text-ink-900",
-              )}
-            >
-              <NotebookPen size={14} aria-hidden="true" />
-              Jurnal Refleksi Mandiri
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mode === "companion"}
-              onClick={() => {
-                setMode("companion");
-              }}
-              className={cn(
-                "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-colors",
-                mode === "companion"
-                  ? "bg-pelan-700 text-white shadow-sm"
-                  : "text-ink-500 hover:text-ink-900",
-              )}
-            >
-              <MessageCircleHeart size={14} aria-hidden="true" />
-              Bicara dengan Teman Refleksi
-            </button>
-          </div>
-        }
       />
 
       <div className="grid items-start gap-5 lg:grid-cols-[1.8fr_1fr]">
@@ -167,15 +111,11 @@ export function RefleksiPage() {
                 {COMPANION_INTRO.name}
                 <span className="text-[11px] font-normal text-ink-500">
                   •{" "}
-                  {mode === "companion"
-                    ? COMPANION_INTRO.badge
-                    : "Catatan pribadi"}
+                  {COMPANION_INTRO.badge}
                 </span>
               </p>
               <p className="text-xs leading-relaxed text-ink-500">
-                {mode === "companion"
-                  ? COMPANION_INTRO.description
-                  : "Tulis apa saja untuk dirimu sendiri. Catatan ini tidak dibalas siapa pun."}
+                {COMPANION_INTRO.description}
               </p>
             </div>
           </div>
@@ -189,7 +129,7 @@ export function RefleksiPage() {
               Sore ini, 15.42 WIB
             </p>
 
-            {visibleMessages.map((message) => (
+            {messages.map((message) => (
               <div
                 key={message.id}
                 className={cn(
@@ -288,7 +228,7 @@ export function RefleksiPage() {
                       sendMessage(draft);
                     }}
                   >
-                    {mode === "companion" ? "Kirim" : "Simpan"}
+                    Kirim
                   </Button>
                 </div>
               </div>
@@ -341,33 +281,6 @@ export function RefleksiPage() {
                   </button>
                 );
               })}
-            </div>
-          </Card>
-
-          <Card as="aside" className="overflow-hidden p-0 lg:p-0">
-            <Artwork
-              variant="journal"
-              icon={Compass}
-              className="min-h-32 rounded-none"
-            >
-              <span className="absolute bottom-2 left-3 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold text-ink-900">
-                {SLOW_ESSAY.tag}
-              </span>
-            </Artwork>
-            <div className="flex flex-col gap-2 p-5">
-              <h3 className="font-serif text-lg font-medium text-ink-900">
-                {SLOW_ESSAY.title}
-              </h3>
-              <p className="text-xs leading-relaxed text-ink-500">
-                {SLOW_ESSAY.excerpt}
-              </p>
-              <Link
-                to="/eksplorasi"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink-900 hover:text-pelan-700"
-              >
-                {SLOW_ESSAY.linkLabel}
-                <ArrowRight size={12} aria-hidden="true" />
-              </Link>
             </div>
           </Card>
 

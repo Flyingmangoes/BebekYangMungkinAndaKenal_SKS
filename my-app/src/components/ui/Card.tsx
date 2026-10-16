@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { MouseEventHandler, ReactNode } from 'react'
 
 import { cn } from '@/lib/cn'
 
@@ -9,6 +9,7 @@ export interface CardProps {
   tone?: CardTone
   as?: 'div' | 'section' | 'article' | 'aside'
   className?: string
+  onClick?: MouseEventHandler<HTMLElement>
 }
 
 const TONE_CLASSES: Record<CardTone, string> = {
@@ -20,9 +21,9 @@ const TONE_CLASSES: Record<CardTone, string> = {
   dark: 'bg-pelan-700 text-white',
 }
 
-export function Card({ children, tone = 'default', as: Tag = 'div', className }: CardProps) {
+export function Card({ children, tone = 'default', as: Tag = 'div', className, onClick }: CardProps) {
   return (
-    <Tag className={cn('rounded-2xl p-5 lg:p-6', TONE_CLASSES[tone], className)}>
+    <Tag className={cn('rounded-2xl p-5 lg:p-6', TONE_CLASSES[tone], className)} onClick={onClick}>
       {children}
     </Tag>
   )

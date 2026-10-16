@@ -6,6 +6,7 @@ import { EksplorasiPage } from '@/app/eksplorasi/EksplorasiPage'
 import { InsightPage } from '@/app/insight/InsightPage'
 import { LoginPage } from '@/app/auth/Login'
 import { Phq9RegisterPage } from '@/app/auth/Register'
+import { LittleMomentsPage } from '@/app/game/LittleMomentsPage'
 import { Phq9IntroPage } from '@/app/questionnaire/IntroPage'
 import { Phq9QuestionPage } from '@/app/questionnaire/QuestionnairePage'
 import { ProfilPage } from '@/app/profil/ProfilPage'
@@ -35,6 +36,7 @@ export function Mainpage() {
             <Route path="topic/guest" element={<TopicDetailGuestPage />} />
             <Route path="check-in" element={<CheckInPage />} />
             <Route path="quest" element={<QuestPage />} />
+            <Route path="game/little-moments" element={<LittleMomentsPage />} />
             <Route path="refleksi" element={<RefleksiPage />} />
             <Route path="insight" element={<InsightPage />} />
             <Route path="eksplorasi" element={<EksplorasiPage />} />
