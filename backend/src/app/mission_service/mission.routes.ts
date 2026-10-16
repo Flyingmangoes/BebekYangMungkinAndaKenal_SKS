@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { validate } from "../../middlewares/validate";
 import { requireAuth } from "../../middlewares/auth";
-import { MissionController } from "./mission_controllers";
+import { MissionController } from "./mission.controllers";
 import type { MissionService } from "./mission.services";
 import { createMissionSchema,missionParamSchema,updateMissionSchema } from "./mission.schema";
 

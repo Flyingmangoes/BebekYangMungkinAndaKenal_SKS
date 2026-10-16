@@ -6,8 +6,8 @@ export const createArticleSchema = z.object({
   body: z.object({
     articleTitle: z.string().trim().min(1).max(200),
     articleDescription: z.string().trim().min(1).max(500),
-    thumbnailUrl: z.string().url(),
-    imageUrls: z.array(z.string().url()).max(20).default([]),
+    thumbnailUrl: z.url(),
+    imageUrls: z.array(z.url()).max(20).default([]),
     content: z.string().min(1),
   }),
 });

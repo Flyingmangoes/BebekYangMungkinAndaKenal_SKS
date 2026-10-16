@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import type { CheckinService } from "./checkin.services";
 import { AuthError } from "../../../error/exception";
-import { historySchema } from "./checkin_streak.schema";
+import { historySchema } from "./checkin.streak.schema";
 
 const getUserId = (req: Request): string | undefined => req.authUser?.userId;
 

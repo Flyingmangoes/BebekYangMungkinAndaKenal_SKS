@@ -27,6 +27,8 @@
     "typescript": "~5.9"
   },
   "scripts": {
-    "postinstall": "prisma skills sync || exit 0"
+    "dev": "tsx watch src/main.ts",
+    "typecheck": "tsc --noEmit",
+    "seed": "tsx prisma/seed.ts"
   }
 }
