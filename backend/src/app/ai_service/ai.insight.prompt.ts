@@ -14,7 +14,7 @@ export const INSIGHT_SYSTEM_INSTRUCTION = [
   "The summary is at most 3 short sentences. Each tip is ONE small, free, safe action, in at most 2 short sentences.",
   "Return only JSON that matches the provided schema.",
 ].join("\n");
-
+  
 // The AI never decides severity. It only receives the label the server already computed.
 const TONE_GUIDE: Record<PH9Severity, string> = {
   minimal: "The person seems to be doing okay. Affirm that and encourage keeping up healthy habits.",

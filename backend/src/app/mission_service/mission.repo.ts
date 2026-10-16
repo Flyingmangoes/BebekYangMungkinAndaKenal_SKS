@@ -1,17 +1,24 @@
 import { Prisma } from "../../generated/prisma/client";
 import type { PrismaClient, Quest } from "../../generated/prisma/client";
 import { MissionError } from "../../error/exception";
-import type { CreateMissionInput, UpdateMissionInput } from "./mission.schema";
+import type { UpdateMissionInput } from "./mission.schema";
 
 const isNotFound = (error: unknown): boolean =>
   error instanceof Prisma.PrismaClientKnownRequestError &&
   error.code === "P2025";
 
+export interface CreateQuestData {
+  questTitle: string;
+  questDescription: string;
+  submissionId: string;
+  source: "ai";
+}
+
 export class MissionRepository {
   constructor(private readonly db: PrismaClient) {}
 
-  async createQuest(userId: string, input: CreateMissionInput): Promise<Quest> {
-    return this.db.quest.create({ data: { ...input, userId } });
+  async createQuest(userId: string, data: CreateQuestData): Promise<Quest> {
+    return this.db.quest.create({ data: { ...data, userId } });
   }
 
   async findAllByUser(userId: string): Promise<Quest[]> {
